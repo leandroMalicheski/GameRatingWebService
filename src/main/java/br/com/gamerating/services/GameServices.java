@@ -51,7 +51,7 @@ public class GameServices {
 		game.setRatingDiversao(7);
 		game.setRatingImersao(10);
 		game.setRatingJogabilidade(8);
-		game.setRatingMedio(7);
+		game.setRatingMedio(4);
 		return game;		
 	}
 	

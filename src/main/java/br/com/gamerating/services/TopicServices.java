@@ -2,12 +2,15 @@ package br.com.gamerating.services;
 
 import java.util.ArrayList;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gamerating.bean.Comment;
 import br.com.gamerating.bean.Topic;
+import br.com.gamerating.bean.User;
 
 @RestController
 public class TopicServices {
@@ -56,5 +59,12 @@ public class TopicServices {
 		topic.setId(1);
 			
 		return topic;
+    }
+	
+	@RequestMapping(value="/addComentario", method=RequestMethod.POST)
+    public Topic login(@RequestBody Comment comment) {
+		//Adicionar Comentario
+		//Carregar Topico
+		return new Topic();
     }
 }
