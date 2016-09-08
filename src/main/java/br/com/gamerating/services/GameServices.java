@@ -50,7 +50,7 @@ public class GameServices {
 		game.setRatingAudio(2);
 		game.setRatingDiversao(7);
 		game.setRatingImersao(10);
-		game.setRatingJogabilidade(8);
+		game.setRatingJogabilidade(0);
 		game.setRatingMedio(4);
 		return game;		
 	}
