@@ -14,9 +14,11 @@ public class UserDAOImpl implements UserDAO {
 	private static final String LOGIN = "SELECT * FROM USER WHERE LOGIN=? AND PASSWORD=?";
 	private static final String LOGIN_VALIDATION = "SELECT * FROM USER WHERE LOGIN=?";
 	private static final String UPDATE_PASSWORD = "UPDATE USER SET PASSWORD=? WHERE LOGIN=?";
+	private static final String DISABLE_USER = "UPDATE USER SET VISIBLE=? WHERE ID=?";
 	private static final String USER_DATA_VALIDATION = "SELECT * FROM USER WHERE LOGIN=? AND EMAIL=? AND PASSWORDTIP=?";
 	private static final String INSERT_USER = "INSERT INTO USER(NAME,EMAIL,LOGIN,PASSWORD,PASSWORDTIP,PROFILE,LIKES,DISLIKES,BLOCKED) VALUES (?,?,?,?,?,?,?,?,?)";
 	private static final String SELECT_USER = "SELECT * FROM USER WHERE ID=?";
+	
 	
 	public static UserDAOImpl instance;
 	private Connection conn;
@@ -126,6 +128,7 @@ public class UserDAOImpl implements UserDAO {
 				usuarioRetorno.setEmail(result.getString("EMAIL"));
 				usuarioRetorno.setLogin(result.getString("LOGIN"));
 				usuarioRetorno.setPassword(result.getString("PASSWORD"));
+				usuarioRetorno.setPasswordTip(result.getString("PASSWORDTIP"));
 				usuarioRetorno.setProfile(result.getInt("PROFILE"));
 				usuarioRetorno.setLikes(result.getInt("LIKES"));
 				usuarioRetorno.setDislikes(result.getInt("DISLIKES"));
@@ -169,6 +172,12 @@ public class UserDAOImpl implements UserDAO {
 				}else{
 					usuarioRetorno.setBlocked(true);					
 				}
+				int visible = result.getInt("VISIBLE");
+				if(visible == 0){
+					usuarioRetorno.setVisible(false);				
+				}else{
+					usuarioRetorno.setVisible(true);					
+				}
 			}
 			return usuarioRetorno;
 			
@@ -178,4 +187,23 @@ public class UserDAOImpl implements UserDAO {
 		}
 	}
 
+	@Override
+	public void disableUser(User user) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		int visibility = 0;
+		if(!user.isVisible()){
+			visibility = 1;
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(DISABLE_USER);
+			preparedStatement.setInt(1,visibility);
+			preparedStatement.setLong(2,user.getId());
+			preparedStatement.execute();
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 }

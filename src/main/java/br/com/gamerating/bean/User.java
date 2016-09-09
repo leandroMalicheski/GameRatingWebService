@@ -13,6 +13,7 @@ public class User {
 	int likes;
 	int dislikes;
 	boolean isBlocked;
+	boolean isVisible;
 	
 	public static User login(String login, String senha){
 		if(login.equalsIgnoreCase("leandro") && senha.equalsIgnoreCase("123")){
@@ -117,6 +118,14 @@ public class User {
 
 	public void setPasswordConfirm(String passwordConfirm) {
 		this.passwordConfirm = passwordConfirm;
+	}
+
+	public boolean isVisible() {
+		return isVisible;
+	}
+
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
 	}
 	
 	

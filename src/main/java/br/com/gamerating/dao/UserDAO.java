@@ -9,4 +9,5 @@ public interface UserDAO {
 	public void updatePassword(User user);
 	public User userLoginValidation(String login);
 	public User userDataValidation(User user);
+	public void disableUser(User user);
 }

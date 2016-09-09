@@ -43,4 +43,16 @@ public class UserServices {
     public User userDataValidation(@RequestBody User user) {
 		return userDao.userDataValidation(user);
     }
+	
+	@RequestMapping(value="/disableUser", method=RequestMethod.POST)
+    public User disableUser(@RequestBody User user) {
+		if(user.isVisible()){
+			user.setVisible(false);
+			userDao.disableUser(user);
+		}else{
+			user.setVisible(true);
+			userDao.disableUser(user);
+		}		
+		return user;
+    }
 }
