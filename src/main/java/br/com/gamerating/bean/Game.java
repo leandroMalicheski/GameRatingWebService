@@ -6,14 +6,16 @@ public class Game {
 	String launchDate;
 	String platforms;
 	String devs;
+	boolean isVisible;
+	long id;
 	int ratingMedio;
+	
+	int userTempId;
 	int ratingJogabilidade;
 	int ratingDiversao;
 	int ratingAudio;
 	int ratingImersao;
 	
-	boolean isVisible;
-	long id;
 	
 	public String getName() {
 		return name;
@@ -89,5 +91,11 @@ public class Game {
 	}
 	public void setVisible(boolean isVisible) {
 		this.isVisible = isVisible;
+	}
+	public int getUserTempId() {
+		return userTempId;
+	}
+	public void setUserTempId(int userTempId) {
+		this.userTempId = userTempId;
 	}	
 }

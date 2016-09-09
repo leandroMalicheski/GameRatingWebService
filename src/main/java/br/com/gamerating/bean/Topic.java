@@ -5,6 +5,11 @@ public class Topic {
 	long id;
 	String title;
 	String body;
+	boolean isClosed;
+	boolean isVisible;
+	boolean isBlocked;
+	long userId;
+	long gameId;
 	
 	public long getId() {
 		return id;
@@ -23,5 +28,35 @@ public class Topic {
 	}
 	public void setBody(String body) {
 		this.body = body;
+	}
+	public boolean isClosed() {
+		return isClosed;
+	}
+	public void setClosed(boolean isClosed) {
+		this.isClosed = isClosed;
+	}
+	public boolean isVisible() {
+		return isVisible;
+	}
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
+	}
+	public boolean isBlocked() {
+		return isBlocked;
+	}
+	public void setBlocked(boolean isBlocked) {
+		this.isBlocked = isBlocked;
+	}
+	public long getUserId() {
+		return userId;
+	}
+	public void setUserId(long userId) {
+		this.userId = userId;
+	}
+	public long getGameId() {
+		return gameId;
+	}
+	public void setGameId(long gameId) {
+		this.gameId = gameId;
 	}
 }

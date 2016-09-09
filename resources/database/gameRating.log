@@ -1,0 +1,21 @@
+/*C2*/SET SCHEMA PUBLIC
+INSERT INTO COMMENT VALUES(0,'Yopooooooooooooo',0,0,0)
+COMMIT
+DELETE FROM GAME WHERE ID=0
+INSERT INTO GAME VALUES(0,'Battlefield Hardline 1','eh\u0089 um videojogo do genero first-person shooter, produzido pela Visceral Games em colaboracao com a EA Digital Illusions CE e publicado pela Electronic Arts.','17/03/2015','PlayStation 4, PlayStation 3, Microsoft Windows','Visceral Games, EA Digital Illusions CE, Criterion Games',5,1,0)
+COMMIT
+DELETE FROM GAME WHERE ID=0
+INSERT INTO GAME VALUES(0,'Battlefield Hardline 1','eh\u0089 um videojogo do genero first-person shooter, produzido pela Visceral Games em colaboracao com a EA Digital Illusions CE e publicado pela Electronic Arts.','17/03/2016','PlayStation 4, PlayStation 3, Microsoft Windows','Visceral Games, EA Digital Illusions CE, Criterion Games',4,1,0)
+COMMIT
+DELETE FROM GAME WHERE ID=0
+INSERT INTO GAME VALUES(0,'Battlefield Hardline 1','eh\u0089 um videojogo do genero first-person shooter, produzido pela Visceral Games em colaboracao com a EA Digital Illusions CE e publicado pela Electronic Arts.','17/03/2016','PlayStation 4, PlayStation 3, Microsoft Windows','Visceral Games, EA Digital Illusions CE, Criterion Games',4,0,0)
+COMMIT
+DELETE FROM RATE WHERE ID=0
+INSERT INTO RATE VALUES(0,0,0,5,5,5,5)
+COMMIT
+INSERT INTO COMMENT VALUES(1,'Comento MUito',0,0,0)
+COMMIT
+INSERT INTO COMMENT VALUES(2,'Comento MUito 2',0,0,0)
+COMMIT
+INSERT INTO COMMENT VALUES(3,'Comento MUito 2 2222',0,0,0)
+COMMIT

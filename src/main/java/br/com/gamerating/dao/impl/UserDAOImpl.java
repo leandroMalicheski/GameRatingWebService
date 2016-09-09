@@ -16,6 +16,8 @@ public class UserDAOImpl implements UserDAO {
 	private static final String UPDATE_PASSWORD = "UPDATE USER SET PASSWORD=? WHERE LOGIN=?";
 	private static final String USER_DATA_VALIDATION = "SELECT * FROM USER WHERE LOGIN=? AND EMAIL=? AND PASSWORDTIP=?";
 	private static final String INSERT_USER = "INSERT INTO USER(NAME,EMAIL,LOGIN,PASSWORD,PASSWORDTIP,PROFILE,LIKES,DISLIKES,BLOCKED) VALUES (?,?,?,?,?,?,?,?,?)";
+	private static final String SELECT_USER = "SELECT * FROM USER WHERE ID=?";
+	
 	public static UserDAOImpl instance;
 	private Connection conn;
 	
@@ -116,6 +118,40 @@ public class UserDAOImpl implements UserDAO {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(LOGIN);
 			preparedStatement.setString(1, usuario.getLogin());
 			preparedStatement.setString(2, usuario.getPassword());
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				usuarioRetorno.setId(result.getInt("ID"));
+				usuarioRetorno.setName(result.getString("NAME"));
+				usuarioRetorno.setEmail(result.getString("EMAIL"));
+				usuarioRetorno.setLogin(result.getString("LOGIN"));
+				usuarioRetorno.setPassword(result.getString("PASSWORD"));
+				usuarioRetorno.setProfile(result.getInt("PROFILE"));
+				usuarioRetorno.setLikes(result.getInt("LIKES"));
+				usuarioRetorno.setDislikes(result.getInt("DISLIKES"));
+				int blocked = result.getInt("BLOCKED");
+				if(blocked == 0){
+					usuarioRetorno.setBlocked(false);				
+				}else{
+					usuarioRetorno.setBlocked(true);					
+				}
+			}
+			return usuarioRetorno;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return usuarioRetorno;
+		}
+	}
+
+	public User getUserByID(Long id) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		User usuarioRetorno = new User();
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_USER);
+			preparedStatement.setLong(1, id);
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
