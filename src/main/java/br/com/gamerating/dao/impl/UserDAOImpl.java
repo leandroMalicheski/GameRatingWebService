@@ -11,15 +11,6 @@ import br.com.gamerating.dao.connection.ConnectionDAO;
 
 public class UserDAOImpl implements UserDAO {
 	
-	private static final String LOGIN = "SELECT * FROM USER WHERE LOGIN=? AND PASSWORD=?";
-	private static final String LOGIN_VALIDATION = "SELECT * FROM USER WHERE LOGIN=?";
-	private static final String UPDATE_PASSWORD = "UPDATE USER SET PASSWORD=? WHERE LOGIN=?";
-	private static final String DISABLE_USER = "UPDATE USER SET VISIBLE=? WHERE ID=?";
-	private static final String USER_DATA_VALIDATION = "SELECT * FROM USER WHERE LOGIN=? AND EMAIL=? AND PASSWORDTIP=?";
-	private static final String INSERT_USER = "INSERT INTO USER(NAME,EMAIL,LOGIN,PASSWORD,PASSWORDTIP,PROFILE,LIKES,DISLIKES,BLOCKED) VALUES (?,?,?,?,?,?,?,?,?)";
-	private static final String SELECT_USER = "SELECT * FROM USER WHERE ID=?";
-	
-	
 	public static UserDAOImpl instance;
 	private Connection conn;
 	
@@ -52,7 +43,7 @@ public class UserDAOImpl implements UserDAO {
 		}
 	}
 	
-	public void updatePassword(User user){
+	public void updatePasswordByLogin(User user){
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
 		}
@@ -132,6 +123,8 @@ public class UserDAOImpl implements UserDAO {
 				usuarioRetorno.setProfile(result.getInt("PROFILE"));
 				usuarioRetorno.setLikes(result.getInt("LIKES"));
 				usuarioRetorno.setDislikes(result.getInt("DISLIKES"));
+				usuarioRetorno.setComments(result.getInt("COMMENTS"));
+				usuarioRetorno.setTopics(result.getInt("TOPICS"));
 				int blocked = result.getInt("BLOCKED");
 				if(blocked == 0){
 					usuarioRetorno.setBlocked(false);				
@@ -166,6 +159,8 @@ public class UserDAOImpl implements UserDAO {
 				usuarioRetorno.setProfile(result.getInt("PROFILE"));
 				usuarioRetorno.setLikes(result.getInt("LIKES"));
 				usuarioRetorno.setDislikes(result.getInt("DISLIKES"));
+				usuarioRetorno.setComments(result.getInt("COMMENTS"));
+				usuarioRetorno.setTopics(result.getInt("TOPICS"));
 				int blocked = result.getInt("BLOCKED");
 				if(blocked == 0){
 					usuarioRetorno.setBlocked(false);				
@@ -192,9 +187,9 @@ public class UserDAOImpl implements UserDAO {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
 		}
-		int visibility = 0;
-		if(!user.isVisible()){
-			visibility = 1;
+		int visibility = 1;
+		if(user.isVisible()){
+			visibility = 0;
 		}
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(DISABLE_USER);
@@ -206,4 +201,85 @@ public class UserDAOImpl implements UserDAO {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void updateTopics(User user) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_USER_TOPICS);
+			preparedStatement.setInt(1,user.getTopics());
+			preparedStatement.setLong(2,user.getId());
+			preparedStatement.execute();
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void updateComments(User user) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_USER_COMMENTS);
+			preparedStatement.setInt(1,user.getTopics());
+			preparedStatement.setLong(2,user.getId());
+			preparedStatement.execute();
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void updateUserProfile(User user) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_USER_PROFILE);
+			preparedStatement.setInt(1,user.getProfile());
+			preparedStatement.setLong(2,user.getId());
+			preparedStatement.execute();
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	@Override
+	public void blockUser(User user) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		int blocked = 0;
+		if(user.isBlocked()){
+			blocked = 1;
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(BLOCK_USER);
+			preparedStatement.setInt(1,blocked);
+			preparedStatement.setLong(2,user.getId());
+			preparedStatement.execute();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static final String LOGIN = "SELECT * FROM USER WHERE LOGIN=? AND PASSWORD=?";
+	private static final String LOGIN_VALIDATION = "SELECT * FROM USER WHERE LOGIN=?";
+	private static final String UPDATE_PASSWORD = "UPDATE USER SET PASSWORD=? WHERE LOGIN=?";
+	private static final String UPDATE_USER_TOPICS = "UPDATE USER SET TOPICS=? WHERE ID=?";
+	private static final String UPDATE_USER_COMMENTS = "UPDATE USER SET COMMENTS=? WHERE ID=?";
+	private static final String UPDATE_USER_PROFILE = "UPDATE USER SET PROFILE=? WHERE ID=?";
+	private static final String DISABLE_USER = "UPDATE USER SET VISIBLE=? WHERE ID=?";
+	private static final String BLOCK_USER = "UPDATE USER SET BLOCKED=? WHERE ID=?";
+	private static final String USER_DATA_VALIDATION = "SELECT * FROM USER WHERE LOGIN=? AND EMAIL=? AND PASSWORDTIP=?";
+	private static final String INSERT_USER = "INSERT INTO USER(NAME,EMAIL,LOGIN,PASSWORD,PASSWORDTIP,PROFILE,LIKES,DISLIKES,BLOCKED) VALUES (?,?,?,?,?,?,?,?,?)";
+	private static final String SELECT_USER = "SELECT * FROM USER WHERE ID=?";
+
 }

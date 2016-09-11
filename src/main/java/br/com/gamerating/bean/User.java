@@ -9,6 +9,8 @@ public class User {
 	String password;
 	String passwordConfirm;
 	String passwordTip;
+	int topics;
+	int comments;
 	int profile;
 	int likes;
 	int dislikes;
@@ -127,6 +129,20 @@ public class User {
 	public void setVisible(boolean isVisible) {
 		this.isVisible = isVisible;
 	}
-	
-	
+
+	public int getTopics() {
+		return topics;
+	}
+
+	public void setTopics(int topics) {
+		this.topics = topics;
+	}
+
+	public int getComments() {
+		return comments;
+	}
+
+	public void setComments(int comments) {
+		this.comments = comments;
+	}
 }

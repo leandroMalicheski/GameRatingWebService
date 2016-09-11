@@ -30,7 +30,7 @@ public class UserServices {
 	public Util updateUserPassword(@RequestBody User user) {
 		String newPassword = Util.getInstance().generatePassword();
 		user.setPassword(newPassword);
-		userDao.updatePassword(user);
+		userDao.updatePasswordByLogin(user);
 		return Util.getInstance();
 	}
 	
@@ -52,6 +52,45 @@ public class UserServices {
 		}else{
 			user.setVisible(true);
 			userDao.disableUser(user);
+		}		
+		return user;
+    }
+	
+	@RequestMapping(value="/getUserById")
+    public User getUserById(@RequestParam(value="id") String id) {
+		return userDao.getUserByID(Long.valueOf(id));
+	}
+	
+	@RequestMapping(value="/updateUserProfile", method=RequestMethod.POST)
+    public User updateUserProfile(@RequestBody User user) {
+		if(user.getProfile() == 1){
+			user.setProfile(2);
+			userDao.updateUserProfile(user);
+		}else{
+			user.setProfile(1);
+			userDao.updateUserProfile(user);
+		}		
+		return user;
+    }
+	
+	@RequestMapping(value="/resetUserPassword")
+    public void resetUserPassword(@RequestParam(value="login") String login) {
+		User user = new User();
+		user.setLogin(login);
+		user.setPassword(Util.getInstance().generatePassword());
+		userDao.updatePasswordByLogin(user);
+		
+		//TODO: EnviarEmail
+	}
+	
+	@RequestMapping(value="/blockUser", method=RequestMethod.POST)
+    public User blockUser(@RequestBody User user) {
+		if(user.isBlocked()){
+			user.setBlocked(false);
+			userDao.blockUser(user);
+		}else{
+			user.setBlocked(true);
+			userDao.blockUser(user);
 		}		
 		return user;
     }

@@ -15,7 +15,7 @@ public class TopicDAOImpl implements TopicDAO{
 	
 	private static final String SELECT_TOPIC_BY_GAME = "SELECT ID,TITLE FROM TOPIC WHERE GAMEID=?";
 	private static final String SELECT_TOPIC_BY_ID = "SELECT * FROM TOPIC WHERE ID=?";
-	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND VISIBLE=0";
+	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND VISIBLE=0";
 	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,BLOCKED,USERID,GAMEID) VALUES(?,?,0,0,0,?,?)";
 	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID) VALUES(?,0,?,?)";
 	public static TopicDAOImpl instance;
@@ -84,6 +84,7 @@ public class TopicDAOImpl implements TopicDAO{
 			
 			while(result.next()){
 				Comment commentTemp = new Comment();
+				commentTemp.setUserId(result.getInt("USERID"));
 				commentTemp.setBody(result.getString("BODY"));
 				commentTemp.setUser(result.getString("LOGIN"));
 				commentList.add(commentTemp);
