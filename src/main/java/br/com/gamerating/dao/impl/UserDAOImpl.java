@@ -36,6 +36,9 @@ public class UserDAOImpl implements UserDAO {
 			preparedStatement.setInt(7, 0);
 			preparedStatement.setInt(8, 0);
 			preparedStatement.setInt(9, 0);
+			preparedStatement.setInt(10, 0);
+			preparedStatement.setInt(11, 0);
+			preparedStatement.setInt(12, 0);
 			preparedStatement.execute();
 						
 		} catch (SQLException e) {
@@ -269,17 +272,127 @@ public class UserDAOImpl implements UserDAO {
 			e.printStackTrace();
 		}
 	}
+	@Override
+	public String checkReputation(String profileId, String userId) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		String reputation = "";
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_USER_REPUTARION);
+			preparedStatement.setInt(1, Integer.valueOf(profileId));
+			preparedStatement.setInt(2, Integer.valueOf(userId));
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				reputation = String.valueOf(result.getInt("ISLIKE"));
+			}
+			return reputation;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return reputation;
+		}
+	}
+
+	@Override
+	public void updateToLike(String profileId, String userId) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_REPUTATION);
+			preparedStatement.setInt(1,0);
+			preparedStatement.setInt(2,Integer.valueOf(profileId));
+			preparedStatement.setInt(3,Integer.valueOf(userId));
+			preparedStatement.execute();
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+	}
+	@Override
+	public void updateToDislike(String profileId, String userId) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_REPUTATION);
+			preparedStatement.setInt(1,1);
+			preparedStatement.setInt(2,Integer.valueOf(profileId));
+			preparedStatement.setInt(3,Integer.valueOf(userId));
+			preparedStatement.execute();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	@Override
+	public void addLike(String profileId, String userId) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(INSERT_REPUTATION);
+			preparedStatement.setInt(1, Integer.valueOf(profileId));
+			preparedStatement.setInt(2, Integer.valueOf(userId));
+			preparedStatement.setInt(3, 0);
+			preparedStatement.execute();
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	@Override
+	public void addDislike(String profileId, String userId) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(INSERT_REPUTATION);
+			preparedStatement.setInt(1, Integer.valueOf(profileId));
+			preparedStatement.setInt(2, Integer.valueOf(userId));
+			preparedStatement.setInt(3, 1);
+			preparedStatement.execute();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	@Override
+	public void updateUserReputation(User userProfile) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_USER_FULL_REPUTATION);
+			preparedStatement.setInt(1,userProfile.getLikes());
+			preparedStatement.setInt(2,userProfile.getDislikes());
+			preparedStatement.setLong(3,userProfile.getId());
+			preparedStatement.execute();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}			
+	}
 	
 	private static final String LOGIN = "SELECT * FROM USER WHERE LOGIN=? AND PASSWORD=?";
 	private static final String LOGIN_VALIDATION = "SELECT * FROM USER WHERE LOGIN=?";
 	private static final String UPDATE_PASSWORD = "UPDATE USER SET PASSWORD=? WHERE LOGIN=?";
+	private static final String UPDATE_REPUTATION = "UPDATE REPUTATION SET ISLIKE=? WHERE PROFILEID=? AND USERID=?";
 	private static final String UPDATE_USER_TOPICS = "UPDATE USER SET TOPICS=? WHERE ID=?";
 	private static final String UPDATE_USER_COMMENTS = "UPDATE USER SET COMMENTS=? WHERE ID=?";
 	private static final String UPDATE_USER_PROFILE = "UPDATE USER SET PROFILE=? WHERE ID=?";
+	private static final String UPDATE_USER_FULL_REPUTATION = "UPDATE USER SET LIKES=?,DISLIKES=? WHERE ID=?";
 	private static final String DISABLE_USER = "UPDATE USER SET VISIBLE=? WHERE ID=?";
 	private static final String BLOCK_USER = "UPDATE USER SET BLOCKED=? WHERE ID=?";
 	private static final String USER_DATA_VALIDATION = "SELECT * FROM USER WHERE LOGIN=? AND EMAIL=? AND PASSWORDTIP=?";
-	private static final String INSERT_USER = "INSERT INTO USER(NAME,EMAIL,LOGIN,PASSWORD,PASSWORDTIP,PROFILE,LIKES,DISLIKES,BLOCKED) VALUES (?,?,?,?,?,?,?,?,?)";
+	private static final String INSERT_USER = "INSERT INTO USER(NAME,EMAIL,LOGIN,PASSWORD,PASSWORDTIP,PROFILE,LIKES,DISLIKES,BLOCKED,VISIBLE,COMMENTS,TOPICS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+	private static final String INSERT_REPUTATION = "INSERT INTO REPUTATION(PROFILEID,USERID,ISLIKE) VALUES (?,?,?)";
 	private static final String SELECT_USER = "SELECT * FROM USER WHERE ID=?";
+	private static final String SELECT_USER_REPUTARION = "SELECT * FROM REPUTATION WHERE PROFILEID=? AND USERID=?";
 
 }

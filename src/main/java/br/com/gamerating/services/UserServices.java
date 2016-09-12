@@ -17,19 +17,20 @@ public class UserServices {
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
     public User login(@RequestBody User user) {
-		User usuario = userDao.login(user);
-		return usuario;
+		user.setPassword(Util.getInstance().encriptyPassword(user.getPassword()));
+		return userDao.login(user);
     }
 	
 	@RequestMapping(value="/addUser", method=RequestMethod.POST)
     public void addUser(@RequestBody User user) {
+		user.setPassword(Util.getInstance().encriptyPassword(user.getPassword()));
 		userDao.add(user);
     }
 	
 	@RequestMapping(value="/updateUserPassword", method=RequestMethod.POST, produces = "application/json")
 	public Util updateUserPassword(@RequestBody User user) {
 		String newPassword = Util.getInstance().generatePassword();
-		user.setPassword(newPassword);
+		user.setPassword(Util.getInstance().encriptyPassword(newPassword));
 		userDao.updatePasswordByLogin(user);
 		return Util.getInstance();
 	}
@@ -77,7 +78,8 @@ public class UserServices {
     public void resetUserPassword(@RequestParam(value="login") String login) {
 		User user = new User();
 		user.setLogin(login);
-		user.setPassword(Util.getInstance().generatePassword());
+		String password = Util.getInstance().generatePassword();
+		user.setPassword(Util.getInstance().encriptyPassword(password));
 		userDao.updatePasswordByLogin(user);
 		
 		//TODO: EnviarEmail
@@ -94,4 +96,41 @@ public class UserServices {
 		}		
 		return user;
     }
+	
+	@RequestMapping(value="/checkReputation")
+    public Util checkReputation(@RequestParam(value="profileId") String profileId, @RequestParam(value="userId") String userId) {
+		Util.getInstance().setReputation(userDao.checkReputation(profileId, userId));
+		return Util.getInstance();
+	}
+	
+	@RequestMapping(value="/giveLike")
+    public User giveLike(@RequestParam(value="profileId") String profileId, @RequestParam(value="userId") String userId) {
+		String reputation = userDao.checkReputation(profileId, userId);
+		User userProfile = userDao.getUserByID(Long.valueOf(profileId));
+		userProfile.setLikes(userProfile.getLikes()+1);
+		
+		if(reputation.equals("1")){
+			userProfile.setDislikes(userProfile.getDislikes()-1);
+			userDao.updateToLike(profileId,userId);
+		}else{
+			userDao.addLike(profileId,userId);
+		}
+		userDao.updateUserReputation(userProfile);
+		return userProfile;
+	}
+	@RequestMapping(value="/giveDislike")
+	public User giveDislike(@RequestParam(value="profileId") String profileId, @RequestParam(value="userId") String userId) {
+		String reputation = userDao.checkReputation(profileId, userId);
+		User userProfile = userDao.getUserByID(Long.valueOf(profileId));
+		userProfile.setDislikes(userProfile.getDislikes()+1);
+		
+		if(reputation.equals("0")){
+			userProfile.setLikes(userProfile.getLikes()-1);
+			userDao.updateToDislike(profileId,userId);
+		}else{
+			userDao.addDislike(profileId,userId);
+		}
+		userDao.updateUserReputation(userProfile);
+		return userProfile;
+	}
 }

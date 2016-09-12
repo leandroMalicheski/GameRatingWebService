@@ -15,4 +15,10 @@ public interface UserDAO {
 	public void updateComments(User user);
 	public void updateUserProfile(User user);
 	public void blockUser(User user);
+	public String checkReputation(String profileId, String userId);
+	public void updateToLike(String profileId, String userId);
+	public void updateToDislike(String profileId, String userId);
+	public void addLike(String profileId, String userId);
+	public void addDislike(String profileId, String userId);
+	public void updateUserReputation(User userProfile);
 }
