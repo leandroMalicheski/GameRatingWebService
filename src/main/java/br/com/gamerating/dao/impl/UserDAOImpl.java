@@ -185,7 +185,6 @@ public class UserDAOImpl implements UserDAO {
 		}
 	}
 
-	@Override
 	public void disableUser(User user) {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
