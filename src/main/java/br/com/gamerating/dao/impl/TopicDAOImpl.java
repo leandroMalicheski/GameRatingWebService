@@ -15,6 +15,8 @@ public class TopicDAOImpl implements TopicDAO{
 	
 	private static final String SELECT_TOPIC_BY_GAME = "SELECT ID,TITLE FROM TOPIC WHERE GAMEID=?";
 	private static final String SELECT_TOPIC_BY_ID = "SELECT * FROM TOPIC WHERE ID=?";
+	private static final String SELECT_TOPIC_BY_USER = "SELECT * FROM TOPIC WHERE USERID=?";
+	private static final String SELECT_COMMENT_BY_USER = "SELECT * FROM COMMENT WHERE USERID=?";
 	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND VISIBLE=0";
 	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,BLOCKED,USERID,GAMEID) VALUES(?,?,0,0,0,?,?)";
 	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID) VALUES(?,0,?,?)";
@@ -28,7 +30,6 @@ public class TopicDAOImpl implements TopicDAO{
 		return instance;
 	}
 
-	@Override
 	public ArrayList<Topic> getTopicsByGameId(String id) {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
@@ -53,7 +54,6 @@ public class TopicDAOImpl implements TopicDAO{
 		}
 	}
 
-	@Override
 	public void add(Topic topic) {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
@@ -71,7 +71,33 @@ public class TopicDAOImpl implements TopicDAO{
 		}
 	}
 
-	@Override
+	public ArrayList<Topic> getTopicByUserId(String id) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<Topic> topicList = new ArrayList<Topic>();
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_TOPIC_BY_USER);
+			preparedStatement.setString(1, id);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				Topic topicTemp = new Topic();
+				topicTemp.setId(result.getLong("ID"));
+				topicTemp.setGameId(result.getLong("GAMEID"));
+				topicTemp.setUserId(result.getInt("USERID"));
+				topicTemp.setBody(result.getString("BODY"));
+				topicTemp.setTitle(result.getString("TITLE"));
+				topicList.add(topicTemp);
+			}
+			return topicList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return topicList;
+		}
+	}
+	
 	public ArrayList<Comment> getCommentsByTopicId(String id) {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
@@ -97,7 +123,6 @@ public class TopicDAOImpl implements TopicDAO{
 		}
 	}
 
-	@Override
 	public Topic getTopicById(String id) {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
@@ -134,6 +159,31 @@ public class TopicDAOImpl implements TopicDAO{
 			preparedStatement.execute();						
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public ArrayList<Comment> getCommentsByUserId(String id) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<Comment> commentList = new ArrayList<Comment>();
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_COMMENT_BY_USER);
+			preparedStatement.setString(1, id);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				Comment commentTemp = new Comment();
+				commentTemp.setTopicId(result.getInt("TOPICID"));
+				commentTemp.setBody(result.getString("BODY"));
+				commentList.add(commentTemp);
+			}
+			return commentList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return commentList;
 		}
 	}
 

@@ -59,4 +59,5 @@ public class Topic {
 	public void setGameId(long gameId) {
 		this.gameId = gameId;
 	}
+
 }

@@ -12,5 +12,7 @@ public interface TopicDAO {
 	ArrayList<Comment> getCommentsByTopicId(String id);
 	Topic getTopicById(String id);
 	void addComment(Comment comment);
+	ArrayList<Topic> getTopicByUserId(String id);
+	ArrayList<Comment> getCommentsByUserId(String id);
 
 }

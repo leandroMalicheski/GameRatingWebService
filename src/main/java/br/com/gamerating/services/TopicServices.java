@@ -25,12 +25,37 @@ public class TopicServices {
 	public ArrayList<Topic> getTopicsByGameId(@RequestParam(value="id") String id) {
 		return topicDAO.getTopicsByGameId(id);
     }
+	@RequestMapping(value="/getTopicByUserId")
+	public ArrayList<Topic> getTopicByUserId(@RequestParam(value="id") String id) {
+		return topicDAO.getTopicByUserId(id);
+	}
 	
 	@RequestMapping(value="/getCommentsByTopicId")
 	public ArrayList<Comment> getCommentsByTopicId(@RequestParam(value="id") String id) {
 		return topicDAO.getCommentsByTopicId(id);
 	}
 	
+	@RequestMapping(value="/getUserCommentedTopics")
+	public ArrayList<Topic> getUserCommentedTopics(@RequestParam(value="id") String id) {
+		ArrayList<Comment> commentsList = topicDAO.getCommentsByUserId(id);
+		ArrayList<Topic> topicsList = new ArrayList<Topic>();
+		for (Comment comment : commentsList) {
+			topicsList.add(topicDAO.getTopicById(String.valueOf(comment.getTopicId())));
+		}
+		return filterCommentListProcess(topicsList);
+	}
+	
+	private ArrayList<Topic> filterCommentListProcess(ArrayList<Topic> topicList) {
+		ArrayList<Topic> filteredList = new ArrayList<Topic>();
+		filteredList.add(topicList.get(0));
+		for (int i = 1; i < topicList.size(); i++) {
+			Topic lastTopic = topicList.get(i-1); 
+			if(lastTopic.getId() != topicList.get(i).getId()){
+				filteredList.add(topicList.get(i));
+			}
+		}
+		return filteredList;
+	}
 	@RequestMapping(value="/getTopicById")
 	public Topic getTopicById(@RequestParam(value="id") String id) {
 		return topicDAO.getTopicById(id);
@@ -53,4 +78,6 @@ public class TopicServices {
 		comment.setUser(user.getLogin());
 		return comment; 
     }
+	
+	
 }

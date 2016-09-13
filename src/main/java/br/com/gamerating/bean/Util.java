@@ -7,8 +7,9 @@ import java.security.NoSuchAlgorithmException;
 import org.apache.commons.lang3.RandomStringUtils;
 
 public class Util {
-	String passwordGenerated;
-	String reputation;
+	private String passwordGenerated;
+	private String passwordEncrypted;
+	private String reputation;
 	static Util instance;
 	public static final String PASSWORD_KEY = "as45u5hdais23he";
 	public static final String SALT_KEY = "feacbc02a3a697b0";
@@ -33,7 +34,7 @@ public class Util {
 		this.passwordGenerated = passwordGenerated;
 	}
 	
-	public String encriptyPassword(String password){
+	public String encryptPassword(String password){
 		MessageDigest algorithm;
 		try {
 			algorithm = MessageDigest.getInstance("MD5");
@@ -58,5 +59,13 @@ public class Util {
 
 	public void setReputation(String reputation) {
 		this.reputation = reputation;
+	}
+
+	public String getPasswordEncrypted() {
+		return passwordEncrypted;
+	}
+
+	public void setPasswordEncrypted(String passwordEncrypted) {
+		this.passwordEncrypted = passwordEncrypted;
 	}
 }

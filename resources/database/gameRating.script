@@ -56,7 +56,7 @@ GRANT DBA TO SA
 SET SCHEMA SYSTEM_LOBS
 INSERT INTO BLOCKS VALUES(0,2147483647,0)
 SET SCHEMA PUBLIC
-INSERT INTO REPUTATION VALUES(0,3,0,0)
+INSERT INTO REPUTATION VALUES(0,3,0,1)
 INSERT INTO COMMENT VALUES(0,'Yopooooooooooooo',0,0,0)
 INSERT INTO COMMENT VALUES(1,'Comento MUito',0,0,0)
 INSERT INTO COMMENT VALUES(2,'Comento MUito 2',0,0,0)
@@ -72,7 +72,7 @@ INSERT INTO TOPIC VALUES(6,'Esse Conta','Mando Muito no Hardvibes',0,0,0,3,0)
 INSERT INTO RATE VALUES(0,0,0,5,5,5,5)
 INSERT INTO RATE VALUES(1,3,0,5,5,5,5)
 INSERT INTO GAME VALUES(0,'Battlefield Hardline','eh\u0089 um videojogo do genero first-person shooter, produzido pela Visceral Games em colaboracao com a EA Digital Illusions CE e publicado pela Electronic Arts.','17/03/2015','PlayStation 4, PlayStation 3, Microsoft Windows','Visceral Games, EA Digital Illusions CE, Criterion Games',3,0,0)
-INSERT INTO USER VALUES(0,'leandro','leandro.malicheski@gmail.com','leandro','202CB962AC59075B964B07152D234B70','Dog',0,12,0,0,0,4,6)
-INSERT INTO USER VALUES(3,'leandro','leandro.malicheski@gmail.com','leandroNoAdmin','202CB962AC59075B964B07152D234B70','dog',1,1,0,0,0,1,1)
+INSERT INTO USER VALUES(0,'leandro','leandro.malicheski@gmail.com','leandro','202CB962AC59075B964B07152D234B70','James',0,12,0,0,0,4,6)
+INSERT INTO USER VALUES(3,'leandro','leandro.malicheski@gmail.com','leandroNoAdmin','202CB962AC59075B964B07152D234B70','dog',1,0,1,0,0,1,1)
 INSERT INTO USER VALUES(4,'leandro','leand@hotmail.com','leandroNo','E0CEA4BB45E36C115356E46910C354AF','dog',2,0,0,0,0,0,0)
 INSERT INTO USER VALUES(5,'Yoooo','leandro@hotmail.com','Yoo','6F3F68708A98A3710110D3755A5D2C44','james',2,0,0,0,0,0,0)

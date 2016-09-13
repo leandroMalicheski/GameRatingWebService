@@ -386,6 +386,7 @@ public class UserDAOImpl implements UserDAO {
 	private static final String UPDATE_USER_TOPICS = "UPDATE USER SET TOPICS=? WHERE ID=?";
 	private static final String UPDATE_USER_COMMENTS = "UPDATE USER SET COMMENTS=? WHERE ID=?";
 	private static final String UPDATE_USER_PROFILE = "UPDATE USER SET PROFILE=? WHERE ID=?";
+	private static final String UPDATE_USER = "UPDATE USER SET NAME=?,EMAIL=?,PASSWORDTIP=? WHERE ID=?";
 	private static final String UPDATE_USER_FULL_REPUTATION = "UPDATE USER SET LIKES=?,DISLIKES=? WHERE ID=?";
 	private static final String DISABLE_USER = "UPDATE USER SET VISIBLE=? WHERE ID=?";
 	private static final String BLOCK_USER = "UPDATE USER SET BLOCKED=? WHERE ID=?";
@@ -394,5 +395,24 @@ public class UserDAOImpl implements UserDAO {
 	private static final String INSERT_REPUTATION = "INSERT INTO REPUTATION(PROFILEID,USERID,ISLIKE) VALUES (?,?,?)";
 	private static final String SELECT_USER = "SELECT * FROM USER WHERE ID=?";
 	private static final String SELECT_USER_REPUTARION = "SELECT * FROM REPUTATION WHERE PROFILEID=? AND USERID=?";
+
+	@Override
+	public void updateUser(User user) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_USER);
+			preparedStatement.setString(1,user.getName());
+			preparedStatement.setString(2,user.getEmail());
+			preparedStatement.setString(3,user.getPasswordTip());
+			preparedStatement.setLong(4,user.getId());
+			preparedStatement.execute();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
 
 }

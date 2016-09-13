@@ -17,20 +17,27 @@ public class UserServices {
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
     public User login(@RequestBody User user) {
-		user.setPassword(Util.getInstance().encriptyPassword(user.getPassword()));
+		user.setPassword(Util.getInstance().encryptPassword(user.getPassword()));
 		return userDao.login(user);
     }
 	
 	@RequestMapping(value="/addUser", method=RequestMethod.POST)
     public void addUser(@RequestBody User user) {
-		user.setPassword(Util.getInstance().encriptyPassword(user.getPassword()));
+		user.setPassword(Util.getInstance().encryptPassword(user.getPassword()));
 		userDao.add(user);
     }
 	
+	@RequestMapping(value="/generateUserPassword", method=RequestMethod.POST, produces = "application/json")
+	public Util generateUserPassword(@RequestBody User user) {
+		String newPassword = Util.getInstance().generatePassword();
+		user.setPassword(Util.getInstance().encryptPassword(newPassword));
+		userDao.updatePasswordByLogin(user);
+		return Util.getInstance();
+	}
+	
 	@RequestMapping(value="/updateUserPassword", method=RequestMethod.POST, produces = "application/json")
 	public Util updateUserPassword(@RequestBody User user) {
-		String newPassword = Util.getInstance().generatePassword();
-		user.setPassword(Util.getInstance().encriptyPassword(newPassword));
+		user.setPassword(Util.getInstance().encryptPassword(user.getPassword()));
 		userDao.updatePasswordByLogin(user);
 		return Util.getInstance();
 	}
@@ -74,12 +81,23 @@ public class UserServices {
 		return user;
     }
 	
+	@RequestMapping(value="/updateUser", method=RequestMethod.POST)
+    public void updateUser(@RequestBody User user) {
+		userDao.updateUser(user);
+    }
+	
+	@RequestMapping(value="/encryptPassword", method=RequestMethod.POST)
+    public Util encryptPassword(@RequestBody Util util) {
+		util.setPasswordEncrypted(util.encryptPassword(util.getPasswordEncrypted()));
+		return util;
+	}
+	
 	@RequestMapping(value="/resetUserPassword")
     public void resetUserPassword(@RequestParam(value="login") String login) {
 		User user = new User();
 		user.setLogin(login);
 		String password = Util.getInstance().generatePassword();
-		user.setPassword(Util.getInstance().encriptyPassword(password));
+		user.setPassword(Util.getInstance().encryptPassword(password));
 		userDao.updatePasswordByLogin(user);
 		
 		//TODO: EnviarEmail
