@@ -89,7 +89,7 @@ public class GameDAOImpl implements GameDAO {
 	}
 
 	@Override
-	public void hideGame(Game game) {
+	public void updateVisibility(Game game) {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
 		}

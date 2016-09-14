@@ -29,14 +29,14 @@ public class GameServices {
 		return gameDAO.getGameById(id);		
 	}
 	
-	@RequestMapping(value="/hideGame", method=RequestMethod.POST)
-    public Game hideGame(@RequestBody Game game) {
+	@RequestMapping(value="/updateVisibility", method=RequestMethod.POST)
+    public Game updateVisibility(@RequestBody Game game) {
 		if(game.getIsVisible()){
 			game.setIsVisible(false);
-			gameDAO.hideGame(game);
+			gameDAO.updateVisibility(game);
 		}else{
 			game.setIsVisible(true);
-			gameDAO.hideGame(game);
+			gameDAO.updateVisibility(game);
 		}		
 		return game;
 	}

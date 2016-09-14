@@ -52,14 +52,14 @@ public class UserServices {
 		return userDao.userDataValidation(user);
     }
 	
-	@RequestMapping(value="/disableUser", method=RequestMethod.POST)
-    public User disableUser(@RequestBody User user) {
+	@RequestMapping(value="/updateDisableStatus", method=RequestMethod.POST)
+    public User updateDisableStatus(@RequestBody User user) {
 		if(user.isVisible()){
 			user.setVisible(false);
-			userDao.disableUser(user);
+			userDao.updateDisableStatus(user);
 		}else{
 			user.setVisible(true);
-			userDao.disableUser(user);
+			userDao.updateDisableStatus(user);
 		}		
 		return user;
     }
@@ -103,14 +103,14 @@ public class UserServices {
 		//TODO: EnviarEmail
 	}
 	
-	@RequestMapping(value="/blockUser", method=RequestMethod.POST)
-    public User blockUser(@RequestBody User user) {
+	@RequestMapping(value="/updateBlockStatus", method=RequestMethod.POST)
+    public User updateBlockStatus(@RequestBody User user) {
 		if(user.isBlocked()){
 			user.setBlocked(false);
-			userDao.blockUser(user);
+			userDao.updateBlockStatus(user);
 		}else{
 			user.setBlocked(true);
-			userDao.blockUser(user);
+			userDao.updateBlockStatus(user);
 		}		
 		return user;
     }

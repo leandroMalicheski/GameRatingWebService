@@ -185,7 +185,7 @@ public class UserDAOImpl implements UserDAO {
 		}
 	}
 
-	public void disableUser(User user) {
+	public void updateDisableStatus(User user) {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
 		}
@@ -253,7 +253,7 @@ public class UserDAOImpl implements UserDAO {
 		
 	}
 	@Override
-	public void blockUser(User user) {
+	public void updateBlockStatus(User user) {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
 		}
@@ -377,23 +377,6 @@ public class UserDAOImpl implements UserDAO {
 			e.printStackTrace();
 		}			
 	}
-	
-	private static final String LOGIN = "SELECT * FROM USER WHERE LOGIN=? AND PASSWORD=?";
-	private static final String LOGIN_VALIDATION = "SELECT * FROM USER WHERE LOGIN=?";
-	private static final String UPDATE_PASSWORD = "UPDATE USER SET PASSWORD=? WHERE LOGIN=?";
-	private static final String UPDATE_REPUTATION = "UPDATE REPUTATION SET ISLIKE=? WHERE PROFILEID=? AND USERID=?";
-	private static final String UPDATE_USER_TOPICS = "UPDATE USER SET TOPICS=? WHERE ID=?";
-	private static final String UPDATE_USER_COMMENTS = "UPDATE USER SET COMMENTS=? WHERE ID=?";
-	private static final String UPDATE_USER_PROFILE = "UPDATE USER SET PROFILE=? WHERE ID=?";
-	private static final String UPDATE_USER = "UPDATE USER SET NAME=?,EMAIL=?,PASSWORDTIP=? WHERE ID=?";
-	private static final String UPDATE_USER_FULL_REPUTATION = "UPDATE USER SET LIKES=?,DISLIKES=? WHERE ID=?";
-	private static final String DISABLE_USER = "UPDATE USER SET VISIBLE=? WHERE ID=?";
-	private static final String BLOCK_USER = "UPDATE USER SET BLOCKED=? WHERE ID=?";
-	private static final String USER_DATA_VALIDATION = "SELECT * FROM USER WHERE LOGIN=? AND EMAIL=? AND PASSWORDTIP=?";
-	private static final String INSERT_USER = "INSERT INTO USER(NAME,EMAIL,LOGIN,PASSWORD,PASSWORDTIP,PROFILE,LIKES,DISLIKES,BLOCKED,VISIBLE,COMMENTS,TOPICS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-	private static final String INSERT_REPUTATION = "INSERT INTO REPUTATION(PROFILEID,USERID,ISLIKE) VALUES (?,?,?)";
-	private static final String SELECT_USER = "SELECT * FROM USER WHERE ID=?";
-	private static final String SELECT_USER_REPUTARION = "SELECT * FROM REPUTATION WHERE PROFILEID=? AND USERID=?";
 
 	@Override
 	public void updateUser(User user) {
@@ -411,7 +394,22 @@ public class UserDAOImpl implements UserDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 	}
+	private static final String LOGIN = "SELECT * FROM USER WHERE LOGIN=? AND PASSWORD=?";
+	private static final String LOGIN_VALIDATION = "SELECT * FROM USER WHERE LOGIN=?";
+	private static final String UPDATE_PASSWORD = "UPDATE USER SET PASSWORD=? WHERE LOGIN=?";
+	private static final String UPDATE_REPUTATION = "UPDATE REPUTATION SET ISLIKE=? WHERE PROFILEID=? AND USERID=?";
+	private static final String UPDATE_USER_TOPICS = "UPDATE USER SET TOPICS=? WHERE ID=?";
+	private static final String UPDATE_USER_COMMENTS = "UPDATE USER SET COMMENTS=? WHERE ID=?";
+	private static final String UPDATE_USER_PROFILE = "UPDATE USER SET PROFILE=? WHERE ID=?";
+	private static final String UPDATE_USER = "UPDATE USER SET NAME=?,EMAIL=?,PASSWORDTIP=? WHERE ID=?";
+	private static final String UPDATE_USER_FULL_REPUTATION = "UPDATE USER SET LIKES=?,DISLIKES=? WHERE ID=?";
+	private static final String DISABLE_USER = "UPDATE USER SET VISIBLE=? WHERE ID=?";
+	private static final String BLOCK_USER = "UPDATE USER SET BLOCKED=? WHERE ID=?";
+	private static final String USER_DATA_VALIDATION = "SELECT * FROM USER WHERE LOGIN=? AND EMAIL=? AND PASSWORDTIP=?";
+	private static final String INSERT_USER = "INSERT INTO USER(NAME,EMAIL,LOGIN,PASSWORD,PASSWORDTIP,PROFILE,LIKES,DISLIKES,BLOCKED,VISIBLE,COMMENTS,TOPICS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+	private static final String INSERT_REPUTATION = "INSERT INTO REPUTATION(PROFILEID,USERID,ISLIKE) VALUES (?,?,?)";
+	private static final String SELECT_USER = "SELECT * FROM USER WHERE ID=?";
+	private static final String SELECT_USER_REPUTARION = "SELECT * FROM REPUTATION WHERE PROFILEID=? AND USERID=?";
 
 }
