@@ -20,5 +20,10 @@ public interface TopicDAO {
 	public ArrayList<Comment> getUserCommentedTopics(String id);
 	public ArrayList<Comment> getUserCommentedTopics(String userId, String topicId);
 	public Comment getCommentById(String id);
+	public void removeComment(Comment comment);
+	public void updateComment(Comment comment);
+	public ArrayList<Topic> listHideTopics();
+	public void upateTopicVisibleStatus(long id);
+	public ArrayList<Comment> getHideComments();
 
 }

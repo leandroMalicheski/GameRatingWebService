@@ -21,10 +21,16 @@ public class TopicServices {
 	TopicDAO topicDAO = TopicDAOImpl.getInstance();	
 	UserDAO userDao = UserDAOImpl.getInstance();
 
+	@RequestMapping(value="/listHideTopics")
+	public ArrayList<Topic> listHideTopics() {
+		return topicDAO.listHideTopics();
+    }
+	
 	@RequestMapping(value="/getTopicsByGameId")
 	public ArrayList<Topic> getTopicsByGameId(@RequestParam(value="id") String id) {
 		return topicDAO.getTopicsByGameId(id);
     }
+	
 	@RequestMapping(value="/getTopicByUserId")
 	public ArrayList<Topic> getTopicByUserId(@RequestParam(value="id") String id) {
 		return topicDAO.getTopicByUserId(id);
@@ -51,13 +57,8 @@ public class TopicServices {
 	}
 	
 	@RequestMapping(value="/getCommentByTopicUserId")
-	public ArrayList<Topic> getCommentByTopicUserId(@RequestParam(value="userId") String userId, @RequestParam(value="topicId") String topicId) {
-		ArrayList<Comment> commentsList = topicDAO.getUserCommentedTopics(userId,topicId);
-		ArrayList<Topic> topicsList = new ArrayList<Topic>();
-		for (Comment comment : commentsList) {
-			topicsList.add(topicDAO.getTopicById(String.valueOf(comment.getTopicId())));
-		}
-		return filterCommentListProcess(topicsList);
+	public ArrayList<Comment> getCommentByTopicUserId(@RequestParam(value="userId") String userId, @RequestParam(value="topicId") String topicId) {
+		return topicDAO.getUserCommentedTopics(userId,topicId);
 	}
 	
 	@RequestMapping(value="/getTopicById")
@@ -73,6 +74,11 @@ public class TopicServices {
 		topicDAO.add(topic);
     }
 	
+	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
+	public void updateComment(@RequestBody Comment comment) {
+		topicDAO.updateComment(comment);
+	}
+	
 	@RequestMapping(value="/updateTopic", method=RequestMethod.POST)
 	public void updateTopic(@RequestBody Topic topic) {
 		topicDAO.updateTopic(topic);
@@ -81,6 +87,10 @@ public class TopicServices {
 	@RequestMapping(value="/removeTopic", method=RequestMethod.POST)
 	public void removeTopic(@RequestBody Topic topic) {
 		topicDAO.removeTopic(topic);
+	}
+	@RequestMapping(value="/removeComment", method=RequestMethod.POST)
+	public void removeComment(@RequestBody Comment comment) {
+		topicDAO.removeComment(comment);
 	}
 	
 	@RequestMapping(value="/updateCloseStatus", method=RequestMethod.POST)
@@ -103,6 +113,31 @@ public class TopicServices {
 		topicDAO.addComment(comment);
 		comment.setUser(user.getLogin());
 		return comment; 
+    }
+
+	@RequestMapping(value="/updateTopicsVisibleStatus", method=RequestMethod.POST)
+    public ArrayList<Topic> updateTopicsVisibleStatus(@RequestBody ArrayList<Topic> topicList) {
+		ArrayList<Topic> returnList = new ArrayList<Topic>();
+		for (Topic topic : topicList) {
+			if(topic.isChecked()){
+				topicDAO.upateTopicVisibleStatus(topic.getId());
+			}else{
+				returnList.add(topic);
+			}
+		}
+		return returnList; 
+    }
+	
+	
+	@RequestMapping(value="/getHideCommentsTopics")
+	public ArrayList<Topic> getHideCommentsTopics() {
+		ArrayList<Comment> commentList = topicDAO.getHideComments();
+		ArrayList<Topic> topicList = new ArrayList<Topic>();
+		for(Comment comment : commentList){
+			Topic topicTemp = topicDAO.getTopicById(String.valueOf(comment.getTopicId()));
+			topicList.add(topicTemp);			
+		}
+		return topicList;
     }
 	
 	private ArrayList<Topic> filterCommentListProcess(ArrayList<Topic> topicList) {

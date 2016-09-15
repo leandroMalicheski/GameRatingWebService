@@ -16,15 +16,20 @@ public class TopicDAOImpl implements TopicDAO{
 	private static final String SELECT_TOPIC_BY_GAME = "SELECT ID,TITLE FROM TOPIC WHERE GAMEID=? AND VISIBLE=0 AND DELETED=0";
 	private static final String SELECT_TOPIC_BY_ID = "SELECT * FROM TOPIC WHERE ID=? AND VISIBLE=0 AND DELETED=0";
 	private static final String SELECT_TOPIC_BY_USER = "SELECT * FROM TOPIC WHERE USERID=? AND VISIBLE=0 AND DELETED=0";
-	private static final String SELECT_COMMENT_BY_USER = "SELECT * FROM COMMENT WHERE USERID=?";
-	private static final String SELECT_COMMENT_BY_ID = "SELECT * FROM COMMENT WHERE ID=?";
-	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER = "SELECT C.TOPICID FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND T.VISIBLE=0 AND DELETED=0";
-	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER_TOPIC = "SELECT C.TOPICID FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND TOPICID=? AND T.VISIBLE=0 AND DELETED=0";
-	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND VISIBLE=0";
-	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,BLOCKED,USERID,GAMEID) VALUES(?,?,0,0,0,?,?)";
-	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID) VALUES(?,0,?,?)";
+	private static final String SELECT_HIDE_TOPICS = "SELECT * FROM TOPIC WHERE VISIBLE=1 AND DELETED=0";
+	private static final String SELECT_HIDE_COMMENTS = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0";
+	private static final String SELECT_COMMENT_BY_USER = "SELECT * FROM COMMENT WHERE USERID=? AND DELETED=0";
+	private static final String SELECT_COMMENT_BY_ID = "SELECT * FROM COMMENT WHERE ID=? AND DELETED=0";
+	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER = "SELECT C.TOPICID FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
+	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER_TOPIC = "SELECT C.ID,C.BODY FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND TOPICID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
+	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND C.VISIBLE=0 AND C.DELETED=0";
+	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,BLOCKED,USERID,GAMEID,DELETED) VALUES(?,?,0,0,0,?,?,0)";
+	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID,DELETED) VALUES(?,0,?,?,0)";
 	private static final String UPDATE_TOPIC_CLOSED_STATUS = "UPDATE TOPIC SET CLOSED=? WHERE ID=?";
 	private static final String UPDATE_TOPIC_REMOVE_STATUS = "UPDATE TOPIC SET DELETED=1 WHERE ID=?";
+	private static final String UPDATE_TOPIC_VISIBLE_STATUS = "UPDATE TOPIC SET VISIBLE=0 WHERE ID=?";
+	private static final String UPDATE_COMMENT_REMOVE_STATUS = "UPDATE COMMENT SET DELETED=1 WHERE ID=?";
+	private static final String UPDATE_COMMENT = "UPDATE COMMENT SET BODY=? WHERE ID=?";
 	private static final String UPDATE_TOPIC = "UPDATE TOPIC SET TITLE=?, BODY=? WHERE ID=?";
 	
 	public static TopicDAOImpl instance;
@@ -250,7 +255,6 @@ public class TopicDAOImpl implements TopicDAO{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 	@Override
@@ -291,7 +295,8 @@ public class TopicDAOImpl implements TopicDAO{
 			
 			while(result.next()){
 				Comment commentTemp = new Comment();
-				commentTemp.setTopicId(result.getLong("TOPICID"));
+				commentTemp.setId(result.getLong("ID"));
+				commentTemp.setBody(result.getString("BODY"));
 				commentList.add(commentTemp);
 			}
 			return commentList;
@@ -322,6 +327,106 @@ public class TopicDAOImpl implements TopicDAO{
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return comment	;
+		}
+	}
+
+	@Override
+	public void removeComment(Comment comment) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_COMMENT_REMOVE_STATUS);
+			preparedStatement.setLong(1,comment.getId());
+			preparedStatement.execute();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void updateComment(Comment comment) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_COMMENT);
+			preparedStatement.setString(1,comment.getBody());
+			preparedStatement.setLong(2,comment.getId());
+			preparedStatement.execute();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public ArrayList<Topic> listHideTopics() {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<Topic> topicList = new ArrayList<Topic>();
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_HIDE_TOPICS);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				Topic topicTemp = new Topic();
+				topicTemp.setId(result.getLong("ID"));
+				topicTemp.setTitle(result.getString("TITLE"));
+				int visibility = result.getInt("VISIBLE");
+				if(visibility == 0){
+					topicTemp.setVisible(true);					
+				}else{
+					topicTemp.setVisible(false);
+				}
+				topicList.add(topicTemp);
+			}
+			return topicList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return topicList;
+		}
+	}
+
+	@Override
+	public void upateTopicVisibleStatus(long id) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_TOPIC_VISIBLE_STATUS);
+			preparedStatement.setLong(1,id);
+			preparedStatement.execute();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public ArrayList<Comment> getHideComments() {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<Comment> commentList = new ArrayList<Comment>();
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_HIDE_COMMENTS);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				Comment commentTemp = new Comment();
+				commentTemp.setId(result.getLong("ID"));
+				commentTemp.setTopicId(result.getInt("TOPICID"));
+				commentList.add(commentTemp);
+			}
+			return commentList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return commentList;
 		}
 	}
 

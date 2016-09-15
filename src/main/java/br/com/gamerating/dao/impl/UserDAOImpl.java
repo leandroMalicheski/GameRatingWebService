@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import br.com.gamerating.bean.User;
 import br.com.gamerating.dao.UserDAO;
@@ -411,5 +412,32 @@ public class UserDAOImpl implements UserDAO {
 	private static final String INSERT_REPUTATION = "INSERT INTO REPUTATION(PROFILEID,USERID,ISLIKE) VALUES (?,?,?)";
 	private static final String SELECT_USER = "SELECT * FROM USER WHERE ID=?";
 	private static final String SELECT_USER_REPUTARION = "SELECT * FROM REPUTATION WHERE PROFILEID=? AND USERID=?";
+	private static final String SELECT_USER_BY_NAME = "SELECT ID,LOGIN FROM USER WHERE LOGIN LIKE ?";
+	
+	@Override
+	public ArrayList<User> searchByName(String search) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		String patternPrepered = "%" + search + "%";
+		ArrayList<User> usersList = new ArrayList<User>();
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_USER_BY_NAME);
+			preparedStatement.setString(1, patternPrepered);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				User userTemp = new User();
+				userTemp.setId(result.getLong("ID"));
+				userTemp.setLogin(result.getString("LOGIN"));
+				usersList.add(userTemp);
+			}
+			return usersList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return usersList;
+		}
+	}
 
 }

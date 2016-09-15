@@ -1,5 +1,7 @@
 package br.com.gamerating.services;
 
+import java.util.ArrayList;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +21,11 @@ public class UserServices {
     public User login(@RequestBody User user) {
 		user.setPassword(Util.getInstance().encryptPassword(user.getPassword()));
 		return userDao.login(user);
+    }
+	
+	@RequestMapping(value="/listUserByName")
+    public ArrayList<User> listUserByName(@RequestParam(value="search") String search) {
+		return userDao.searchByName(search);
     }
 	
 	@RequestMapping(value="/addUser", method=RequestMethod.POST)

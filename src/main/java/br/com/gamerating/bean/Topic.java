@@ -7,6 +7,7 @@ public class Topic {
 	String body;
 	boolean isClosed;
 	boolean isVisible;
+	boolean checked;
 	boolean isBlocked;
 	long userId;
 	long gameId;
@@ -40,6 +41,12 @@ public class Topic {
 	}
 	public void setVisible(boolean isVisible) {
 		this.isVisible = isVisible;
+	}
+	public boolean isChecked() {
+		return checked;
+	}
+	public void setChecked(boolean checked) {
+		this.checked = checked;
 	}
 	public boolean isBlocked() {
 		return isBlocked;

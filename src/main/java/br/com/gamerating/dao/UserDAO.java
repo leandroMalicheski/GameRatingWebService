@@ -1,5 +1,7 @@
 package br.com.gamerating.dao;
 
+import java.util.ArrayList;
+
 import br.com.gamerating.bean.User;
 
 public interface UserDAO {
@@ -22,4 +24,5 @@ public interface UserDAO {
 	public void addDislike(String profileId, String userId);
 	public void updateUserReputation(User userProfile);
 	public void updateUser(User user);
+	public ArrayList<User> searchByName(String search);
 }
