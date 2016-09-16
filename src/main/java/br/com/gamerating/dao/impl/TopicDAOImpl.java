@@ -18,19 +18,21 @@ public class TopicDAOImpl implements TopicDAO{
 	private static final String SELECT_TOPIC_BY_USER = "SELECT * FROM TOPIC WHERE USERID=? AND VISIBLE=0 AND DELETED=0";
 	private static final String SELECT_HIDE_TOPICS = "SELECT * FROM TOPIC WHERE VISIBLE=1 AND DELETED=0";
 	private static final String SELECT_HIDE_COMMENTS = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0";
+	private static final String SELECT_HIDE_COMMENTS_BY_TOPIC = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0 AND TOPICID=?";
 	private static final String SELECT_COMMENT_BY_USER = "SELECT * FROM COMMENT WHERE USERID=? AND DELETED=0";
 	private static final String SELECT_COMMENT_BY_ID = "SELECT * FROM COMMENT WHERE ID=? AND DELETED=0";
 	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER = "SELECT C.TOPICID FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
 	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER_TOPIC = "SELECT C.ID,C.BODY FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND TOPICID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
-	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND C.VISIBLE=0 AND C.DELETED=0";
+	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID,C.ID FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND C.VISIBLE=0 AND C.DELETED=0";
 	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,BLOCKED,USERID,GAMEID,DELETED) VALUES(?,?,0,0,0,?,?,0)";
 	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID,DELETED) VALUES(?,0,?,?,0)";
 	private static final String UPDATE_TOPIC_CLOSED_STATUS = "UPDATE TOPIC SET CLOSED=? WHERE ID=?";
 	private static final String UPDATE_TOPIC_REMOVE_STATUS = "UPDATE TOPIC SET DELETED=1 WHERE ID=?";
-	private static final String UPDATE_TOPIC_VISIBLE_STATUS = "UPDATE TOPIC SET VISIBLE=0 WHERE ID=?";
 	private static final String UPDATE_COMMENT_REMOVE_STATUS = "UPDATE COMMENT SET DELETED=1 WHERE ID=?";
 	private static final String UPDATE_COMMENT = "UPDATE COMMENT SET BODY=? WHERE ID=?";
+	private static final String UPDATE_COMMENT_HIDE_FLAG = "UPDATE COMMENT SET VISIBLE=? WHERE ID=?";
 	private static final String UPDATE_TOPIC = "UPDATE TOPIC SET TITLE=?, BODY=? WHERE ID=?";
+	private static final String UPDATE_TOPIC_HIDE_FLAG = "UPDATE TOPIC SET VISIBLE=? WHERE ID=?";
 	
 	public static TopicDAOImpl instance;
 	private Connection conn;
@@ -125,6 +127,7 @@ public class TopicDAOImpl implements TopicDAO{
 				commentTemp.setUserId(result.getInt("USERID"));
 				commentTemp.setBody(result.getString("BODY"));
 				commentTemp.setUser(result.getString("LOGIN"));
+				commentTemp.setId(result.getLong("ID"));
 				commentList.add(commentTemp);
 			}
 			return commentList;
@@ -154,6 +157,12 @@ public class TopicDAOImpl implements TopicDAO{
 					topic.setClosed(true);
 				}else{
 					topic.setClosed(false);
+				}
+				int visibility = result.getInt("VISIBLE");
+				if(visibility == 1){
+					topic.setVisible(false);
+				}else{
+					topic.setVisible(true);
 				}
 			}
 			return topic;
@@ -321,6 +330,12 @@ public class TopicDAOImpl implements TopicDAO{
 			while(result.next()){
 				comment.setId(result.getInt("ID"));
 				comment.setBody(result.getString("BODY"));
+				int visibility = result.getInt("VISIBLE");
+				if(visibility == 0){
+					comment.setVisible(true);
+				}else{
+					comment.setVisible(false);
+				}
 			}
 			return comment;
 			
@@ -392,21 +407,6 @@ public class TopicDAOImpl implements TopicDAO{
 	}
 
 	@Override
-	public void upateTopicVisibleStatus(long id) {
-		if(this.conn == null){
-			this.conn = ConnectionDAO.getInstance().getConnection();
-		}
-		try {
-			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_TOPIC_VISIBLE_STATUS);
-			preparedStatement.setLong(1,id);
-			preparedStatement.execute();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
 	public ArrayList<Comment> getHideComments() {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
@@ -420,6 +420,78 @@ public class TopicDAOImpl implements TopicDAO{
 				Comment commentTemp = new Comment();
 				commentTemp.setId(result.getLong("ID"));
 				commentTemp.setTopicId(result.getInt("TOPICID"));
+				commentList.add(commentTemp);
+			}
+			return commentList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return commentList;
+		}
+	}
+
+	@Override
+	public void updateVisibility(Topic topic) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_TOPIC_HIDE_FLAG);
+			int visibility = 0;
+			if(!topic.isVisible()){
+				visibility = 1;
+			}
+			preparedStatement.setInt(1, visibility);
+			preparedStatement.setLong(2,topic.getId());
+			preparedStatement.execute();
+						
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void updateCommentVisibility(Comment comment) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_COMMENT_HIDE_FLAG);
+			int visibility = 0;
+			if(!comment.isVisible()){
+				visibility = 1;
+			}
+			preparedStatement.setInt(1, visibility);
+			preparedStatement.setLong(2,comment.getId());
+			preparedStatement.execute();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public ArrayList<Comment> getHideCommentsTopicsByTopicId(String id) {
+		
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<Comment> commentList = new ArrayList<Comment>();
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_HIDE_COMMENTS_BY_TOPIC);
+			preparedStatement.setString(1, id);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				Comment commentTemp = new Comment();
+				commentTemp.setId(result.getLong("ID"));
+				commentTemp.setBody(result.getString("BODY"));
+				int visibility = result.getInt("VISIBLE");
+				if(visibility == 0){
+					commentTemp.setVisible(true);					
+				}else{
+					commentTemp.setVisible(false);
+				}
 				commentList.add(commentTemp);
 			}
 			return commentList;

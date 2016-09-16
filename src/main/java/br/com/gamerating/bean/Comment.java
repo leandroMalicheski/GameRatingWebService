@@ -6,6 +6,8 @@ public class Comment {
 	long id;
 	long userId;
 	long topicId;
+	boolean isVisible;
+	boolean checked;
 	
 	public String getUser() {
 		return user;
@@ -36,5 +38,17 @@ public class Comment {
 	}
 	public void setTopicId(long topicId) {
 		this.topicId = topicId;
+	}
+	public boolean isVisible() {
+		return isVisible;
+	}
+	public void setVisible(boolean isVisible) {
+		this.isVisible = isVisible;
+	}
+	public boolean isChecked() {
+		return checked;
+	}
+	public void setChecked(boolean checked) {
+		this.checked = checked;
 	}	
 }

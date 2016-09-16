@@ -23,7 +23,9 @@ public interface TopicDAO {
 	public void removeComment(Comment comment);
 	public void updateComment(Comment comment);
 	public ArrayList<Topic> listHideTopics();
-	public void upateTopicVisibleStatus(long id);
 	public ArrayList<Comment> getHideComments();
+	public void updateVisibility(Topic topic);
+	public void updateCommentVisibility(Comment comment);
+	public ArrayList<Comment> getHideCommentsTopicsByTopicId(String id);
 
 }

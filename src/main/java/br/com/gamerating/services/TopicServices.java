@@ -120,13 +120,27 @@ public class TopicServices {
 		ArrayList<Topic> returnList = new ArrayList<Topic>();
 		for (Topic topic : topicList) {
 			if(topic.isChecked()){
-				topicDAO.upateTopicVisibleStatus(topic.getId());
+				topic.setVisible(true);
+				topicDAO.updateVisibility(topic);
 			}else{
 				returnList.add(topic);
 			}
 		}
 		return returnList; 
     }
+	@RequestMapping(value="/updateCommetsVisibleStatus", method=RequestMethod.POST)
+	public ArrayList<Comment> updateCommetsVisibleStatus(@RequestBody ArrayList<Comment> commentList) {
+		ArrayList<Comment> returnList = new ArrayList<Comment>();
+		for (Comment comment : commentList) {
+			if(comment.isChecked()){
+				comment.setVisible(true);
+				topicDAO.updateCommentVisibility(comment);
+			}else{
+				returnList.add(comment);
+			}
+		}
+		return returnList; 
+	}
 	
 	
 	@RequestMapping(value="/getHideCommentsTopics")
@@ -139,6 +153,10 @@ public class TopicServices {
 		}
 		return topicList;
     }
+	@RequestMapping(value="/getHideCommentsTopicsByTopicId")
+	public ArrayList<Comment> getHideCommentsTopicsByTopicId(@RequestParam(value="id") String id) {
+		return topicDAO.getHideCommentsTopicsByTopicId(id);
+	}
 	
 	private ArrayList<Topic> filterCommentListProcess(ArrayList<Topic> topicList) {
 		ArrayList<Topic> filteredList = new ArrayList<Topic>();
@@ -150,5 +168,28 @@ public class TopicServices {
 			}
 		}
 		return filteredList;
+	}
+	
+	@RequestMapping(value="/updateTopicVisibility", method=RequestMethod.POST)
+    public Topic updateVisibility(@RequestBody Topic topic) {
+		if(topic.isVisible()){
+			topic.setVisible(false);
+			topicDAO.updateVisibility(topic);
+		}else{
+			topic.setVisible(true);
+			topicDAO.updateVisibility(topic);
+		}		
+		return topic;
+	}
+	@RequestMapping(value="/updateCommentVisibility", method=RequestMethod.POST)
+	public Comment updateVisibility(@RequestBody Comment comment) {
+		if(comment.isVisible()){
+			comment.setVisible(false);
+			topicDAO.updateCommentVisibility(comment);
+		}else{
+			comment.setVisible(true);
+			topicDAO.updateCommentVisibility(comment);
+		}		
+		return comment;
 	}
 }
