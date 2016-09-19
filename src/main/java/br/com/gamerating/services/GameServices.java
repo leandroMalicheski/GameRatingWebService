@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.gamerating.bean.Game;
 import br.com.gamerating.bean.Util;
 import br.com.gamerating.dao.GameDAO;
+import br.com.gamerating.dao.GameHistoryDAO;
 import br.com.gamerating.dao.impl.GameDAOImpl;
+import br.com.gamerating.dao.impl.GameHistoryDAOImpl;
 
 @RestController
 public class GameServices {
 	GameDAO gameDAO = GameDAOImpl.getInstance();
+	GameHistoryDAO gameHistoryDAO = GameHistoryDAOImpl.getInstance();
 	
 	@RequestMapping(value="/listGamesByName")
     public ArrayList<Game> listGamesByName(@RequestParam(value="search") String search) {
@@ -25,6 +28,10 @@ public class GameServices {
 		return gameDAO.searchByName(search);
     }
 
+	@RequestMapping(value="/addVisitedTime")
+    public void addVisitedTime(@RequestParam(value="id") String id, @RequestParam(value="userLogin") String userLogin) {
+		gameHistoryDAO.addVisitedTime(id,userLogin);
+	}
 	@RequestMapping(value="/getJogoById")
     public Game getJogoById(@RequestParam(value="id") String id) {
 		return gameDAO.getGameById(id);		
@@ -66,5 +73,6 @@ public class GameServices {
 		game.setRatingMedio(Util.calcularRateMedio(game));
 		gameDAO.addGame(game);
 		gameDAO.addRate(gameDAO.getGameIdByName(game.getName()),game);
+		gameHistoryDAO.addHistory(gameDAO.getGameIdByName(game.getName()));
 	}
 }
