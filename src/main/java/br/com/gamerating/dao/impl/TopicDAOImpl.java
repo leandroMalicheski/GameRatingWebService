@@ -1,10 +1,12 @@
 package br.com.gamerating.dao.impl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import br.com.gamerating.bean.Comment;
 import br.com.gamerating.bean.Topic;
@@ -13,10 +15,10 @@ import br.com.gamerating.dao.connection.ConnectionDAO;
 
 public class TopicDAOImpl implements TopicDAO{
 	
-	private static final String SELECT_TOPIC_BY_GAME = "SELECT ID,TITLE FROM TOPIC WHERE GAMEID=? AND VISIBLE=0 AND DELETED=0";
-	private static final String SELECT_TOPIC_BY_ID = "SELECT * FROM TOPIC WHERE ID=? AND VISIBLE=0 AND DELETED=0";
-	private static final String SELECT_TOPIC_BY_USER = "SELECT * FROM TOPIC WHERE USERID=? AND VISIBLE=0 AND DELETED=0";
-	private static final String SELECT_HIDE_TOPICS = "SELECT * FROM TOPIC WHERE VISIBLE=1 AND DELETED=0";
+	private static final String SELECT_TOPIC_BY_GAME = "SELECT ID,TITLE FROM TOPIC WHERE GAMEID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
+	private static final String SELECT_TOPIC_BY_ID = "SELECT * FROM TOPIC WHERE ID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
+	private static final String SELECT_TOPIC_BY_USER = "SELECT * FROM TOPIC WHERE USERID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
+	private static final String SELECT_HIDE_TOPICS = "SELECT * FROM TOPIC WHERE VISIBLE=1 AND DELETED=0 ORDER BY CREATIONDATE DESC";
 	private static final String SELECT_HIDE_COMMENTS = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0";
 	private static final String SELECT_HIDE_COMMENTS_BY_TOPIC = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0 AND TOPICID=?";
 	private static final String SELECT_COMMENT_BY_USER = "SELECT * FROM COMMENT WHERE USERID=? AND DELETED=0";
@@ -24,7 +26,7 @@ public class TopicDAOImpl implements TopicDAO{
 	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER = "SELECT C.TOPICID FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
 	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER_TOPIC = "SELECT C.ID,C.BODY FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND TOPICID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
 	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID,C.ID FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND C.VISIBLE=0 AND C.DELETED=0";
-	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,BLOCKED,USERID,GAMEID,DELETED) VALUES(?,?,0,0,0,?,?,0)";
+	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,BLOCKED,USERID,GAMEID,DELETED,CREATIONDATE) VALUES(?,?,0,0,0,?,?,0,?)";
 	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID,DELETED) VALUES(?,0,?,?,0)";
 	private static final String UPDATE_TOPIC_CLOSED_STATUS = "UPDATE TOPIC SET CLOSED=? WHERE ID=?";
 	private static final String UPDATE_TOPIC_REMOVE_STATUS = "UPDATE TOPIC SET DELETED=1 WHERE ID=?";
@@ -78,6 +80,8 @@ public class TopicDAOImpl implements TopicDAO{
 			preparedStatement.setString(2, topic.getBody());
 			preparedStatement.setLong(3, topic.getUserId());
 			preparedStatement.setLong(4, topic.getGameId());
+			Date dataCriacao = new Date(Calendar.getInstance().getTimeInMillis());
+			preparedStatement.setDate(5, dataCriacao);			
 			preparedStatement.execute();
 						
 		} catch (SQLException e) {

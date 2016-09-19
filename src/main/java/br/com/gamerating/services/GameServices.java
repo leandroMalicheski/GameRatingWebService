@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gamerating.bean.Game;
+import br.com.gamerating.bean.Util;
 import br.com.gamerating.dao.GameDAO;
 import br.com.gamerating.dao.impl.GameDAOImpl;
 
@@ -60,6 +61,10 @@ public class GameServices {
 	public void updateGameRate(@RequestBody Game game) {
 		gameDAO.updateRate(game);
 	}
-	
-	
+	@RequestMapping(value="/addGame", method=RequestMethod.POST)
+	public void addGame(@RequestBody Game game) {
+		game.setRatingMedio(Util.calcularRateMedio(game));
+		gameDAO.addGame(game);
+		gameDAO.addRate(gameDAO.getGameIdByName(game.getName()),game);
+	}
 }

@@ -3,8 +3,12 @@ package br.com.gamerating.bean;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 import org.apache.commons.lang3.RandomStringUtils;
+
+import br.com.gamerating.dao.GameDAO;
+import br.com.gamerating.dao.impl.GameDAOImpl;
 
 public class Util {
 	private String passwordGenerated;
@@ -67,5 +71,49 @@ public class Util {
 
 	public void setPasswordEncrypted(String passwordEncrypted) {
 		this.passwordEncrypted = passwordEncrypted;
+	}
+
+	public static int calcularRateMedio(Game game) {
+		int audio = game.getRatingAudio();
+		int diversao = game.getRatingDiversao();
+		int imersao = game.getRatingImersao();
+		int jogabilidade = game.getRatingJogabilidade();
+		int total = 0;
+		int retorno = 0;
+		if(game.getRatingMedio() == 0){
+			total = audio + diversao + imersao + jogabilidade;
+			retorno = total/4;
+		}else{
+			GameDAO gameDao = GameDAOImpl.getInstance();
+			ArrayList<Game> gameList = gameDao.getRateInformationByGame(game.getId());
+			audio = prepareRate("audio", gameList);
+			diversao = prepareRate("diversao", gameList);
+			imersao = prepareRate("imersao", gameList);
+			jogabilidade = prepareRate("jogabilidade", gameList);
+			total = audio + diversao + imersao + jogabilidade;
+			retorno = total/4;
+		}
+		return retorno;
+	}
+
+	private static int prepareRate(String string, ArrayList<Game> gameList) {
+		int total = 0;
+		for(Game game : gameList){
+			switch (string) {
+			case "audio":
+				total = total + game.getRatingAudio();
+				break;
+			case "diversao":
+				total = total + game.getRatingDiversao();
+				break;
+			case "imersao":
+				total = total + game.getRatingImersao();
+				break;
+			case "jogabilidade":
+				total = total + game.getRatingJogabilidade();
+				break;
+			}
+		}
+		return total/gameList.size();
 	}
 }
