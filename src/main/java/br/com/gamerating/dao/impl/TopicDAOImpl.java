@@ -17,6 +17,7 @@ public class TopicDAOImpl implements TopicDAO{
 	
 	private static final String SELECT_TOPIC_BY_GAME = "SELECT ID,TITLE FROM TOPIC WHERE GAMEID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
 	private static final String SELECT_TOPIC_BY_ID = "SELECT * FROM TOPIC WHERE ID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
+	private static final String SELECT_TOPIC_BY_TITLE = "SELECT ID FROM TOPIC WHERE TITLE=?";
 	private static final String SELECT_TOPIC_BY_USER = "SELECT * FROM TOPIC WHERE USERID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
 	private static final String SELECT_HIDE_TOPICS = "SELECT * FROM TOPIC WHERE VISIBLE=1 AND DELETED=0 ORDER BY CREATIONDATE DESC";
 	private static final String SELECT_HIDE_COMMENTS = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0";
@@ -503,6 +504,28 @@ public class TopicDAOImpl implements TopicDAO{
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return commentList;
+		}
+	}
+
+	@Override
+	public long getTopicByTitle(Topic topic) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		long retorno = 0;
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_TOPIC_BY_TITLE);
+			preparedStatement.setString(1, topic.getTitle());
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				retorno = result.getLong("ID");
+			}
+			return retorno;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return retorno;
 		}
 	}
 

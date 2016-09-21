@@ -14,6 +14,7 @@ import br.com.gamerating.bean.User;
 import br.com.gamerating.dao.TopicDAO;
 import br.com.gamerating.dao.UserDAO;
 import br.com.gamerating.dao.impl.TopicDAOImpl;
+import br.com.gamerating.dao.impl.TopicHistoryDAOImpl;
 import br.com.gamerating.dao.impl.UserDAOImpl;
 
 @RestController
@@ -62,7 +63,9 @@ public class TopicServices {
 	}
 	
 	@RequestMapping(value="/getTopicById")
-	public Topic getTopicById(@RequestParam(value="id") String id) {
+	public Topic getTopicById(@RequestParam(value="topicId") String id, @RequestParam(value="userId") String userId) {
+		User user = UserDAOImpl.getInstance().getUserByID(Long.valueOf(userId));
+		TopicHistoryDAOImpl.getInstance().addVisitedTime(user.getLogin(),id);
 		return topicDAO.getTopicById(id);
     }
 	
@@ -72,6 +75,8 @@ public class TopicServices {
 		user.setTopics(user.getTopics()+1);
 		userDao.updateTopics(user);
 		topicDAO.add(topic);
+		
+		TopicHistoryDAOImpl.getInstance().addHistory(topicDAO.getTopicByTitle(topic));
     }
 	
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)

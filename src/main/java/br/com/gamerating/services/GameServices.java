@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.gamerating.bean.Game;
+import br.com.gamerating.bean.User;
 import br.com.gamerating.bean.Util;
 import br.com.gamerating.dao.GameDAO;
 import br.com.gamerating.dao.GameHistoryDAO;
 import br.com.gamerating.dao.impl.GameDAOImpl;
 import br.com.gamerating.dao.impl.GameHistoryDAOImpl;
+import br.com.gamerating.dao.impl.UserDAOImpl;
 
 @RestController
 public class GameServices {
@@ -29,8 +31,9 @@ public class GameServices {
     }
 
 	@RequestMapping(value="/addVisitedTime")
-    public void addVisitedTime(@RequestParam(value="id") String id, @RequestParam(value="userLogin") String userLogin) {
-		gameHistoryDAO.addVisitedTime(id,userLogin);
+    public void addVisitedTime(@RequestParam(value="gameId") String id, @RequestParam(value="userId") String userLogin) {
+		User user = UserDAOImpl.getInstance().getUserByID(Long.valueOf(userLogin));
+		gameHistoryDAO.addVisitedTime(id,user.getLogin());
 	}
 	@RequestMapping(value="/getJogoById")
     public Game getJogoById(@RequestParam(value="id") String id) {

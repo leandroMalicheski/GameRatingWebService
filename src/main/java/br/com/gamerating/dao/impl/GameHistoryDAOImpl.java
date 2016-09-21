@@ -13,11 +13,12 @@ import br.com.gamerating.dao.connection.ConnectionDAO;
 import br.com.gamerating.vo.GameHistory;
 
 public class GameHistoryDAOImpl implements GameHistoryDAO {
-	private static final String INSERT_GAME_HISTORY = "INSERT INTO GAMEHISTORY(VISITEDTIMES,NUMBERTOPICS,GAMEID) VALUES(0,0,?)";
+	private static final String INSERT_GAME_HISTORY = "INSERT INTO GAMEHISTORY(VISITEDTIMES,GAMEID) VALUES(0,?)";
 	private static final String SELECT_GAME_HISTORY = "SELECT * FROM GAMEHISTORY WHERE GAMEID=?";
 	private static final String UPDATE_VISITEDTIMES = "UPDATE GAMEHISTORY SET VISITEDTIMES=?,VISITEDDATE=?,USERVISITED=? WHERE GAMEID=?";
 	private static final String SELECT_GAME_TOPICS = "SELECT G.NAME , COUNT(T.ID) AS TOPICS FROM GAME AS G,TOPIC AS T WHERE G.ID=T.GAMEID GROUP BY G.ID";
-	
+	private static final String SELECT_GAME_COMMENTS = "SELECT G.NAME , COUNT(C.ID) AS COMMENTS FROM GAME AS G,TOPIC AS T, COMMENT AS C WHERE G.ID=T.GAMEID AND T.ID=C.TOPICID GROUP BY G.ID";
+	private static final String SELECT_GAME_LAST_VISITED_DATE = "SELECT G.NAME, GH.VISITEDDATE, GH.USERVISITED FROM GAMEHISTORY AS GH, GAME AS G WHERE G.ID=GH.GAMEID ORDER BY GH.VISITEDDATE DESC";
 	
 	public static GameHistoryDAOImpl instance = null;
 	private Connection conn;
@@ -88,7 +89,7 @@ public class GameHistoryDAOImpl implements GameHistoryDAO {
 	}
 
 	@Override
-	public ArrayList<GameHistory> getRelatorioTopicosJogo() {
+	public ArrayList<GameHistory> listNumTopicsGame() {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
 		}
@@ -101,7 +102,58 @@ public class GameHistoryDAOImpl implements GameHistoryDAO {
 			while(result.next()){
 				GameHistory gameHistoryVo = new GameHistory();
 				gameHistoryVo.setGameName(result.getString("NAME"));
-				gameHistoryVo.setVisitedTimes(result.getInt("TOPICS"));
+				gameHistoryVo.setNumTopics(result.getInt("TOPICS"));
+				gameHistoryVoList.add(gameHistoryVo);
+			}
+			return gameHistoryVoList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return gameHistoryVoList;
+		}
+	}
+	
+	@Override
+	public ArrayList<GameHistory> listNumCommentsGame() {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<GameHistory> gameHistoryVoList = new ArrayList<GameHistory>();
+		
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_GAME_COMMENTS);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				GameHistory gameHistoryVo = new GameHistory();
+				gameHistoryVo.setGameName(result.getString("NAME"));
+				gameHistoryVo.setNumComments(result.getInt("COMMENTS"));
+				gameHistoryVoList.add(gameHistoryVo);
+			}
+			return gameHistoryVoList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return gameHistoryVoList;
+		}
+	}
+
+	@Override
+	public ArrayList<GameHistory> lastViewGame() {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<GameHistory> gameHistoryVoList = new ArrayList<GameHistory>();
+		
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_GAME_LAST_VISITED_DATE);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				GameHistory gameHistoryVo = new GameHistory();
+				gameHistoryVo.setGameName(result.getString("NAME"));
+				gameHistoryVo.setVisitedDate(result.getString("VISITEDDATE"));
+				gameHistoryVo.setUserLogin(result.getString("USERVISITED"));
 				gameHistoryVoList.add(gameHistoryVo);
 			}
 			return gameHistoryVoList;

@@ -8,6 +8,8 @@ public interface GameHistoryDAO {
 
 	void addHistory(long id);
 	void addVisitedTime(String id, String userLogin);
-	ArrayList<GameHistory> getRelatorioTopicosJogo();
+	ArrayList<GameHistory> listNumTopicsGame();
+	ArrayList<GameHistory> listNumCommentsGame();
+	ArrayList<GameHistory> lastViewGame();
 
 }
