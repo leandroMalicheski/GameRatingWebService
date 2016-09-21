@@ -1,11 +1,13 @@
 package br.com.gamerating.bean;
 
 public class Comment {
-	String user;
-	String body;
 	long id;
 	long userId;
 	long topicId;
+
+	String user;
+	String body;
+	
 	boolean isVisible;
 	boolean checked;
 	

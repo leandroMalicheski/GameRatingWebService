@@ -8,7 +8,7 @@ public class ConnectionDAO {
 	
 	private static ConnectionDAO instance;
 	private static final String URL = "jdbc:hsqldb:file:C:\\Users\\lmacedo\\git\\GameRatingWebService\\resources\\database\\gameRating";
-//	private static final String URL = "jdbc:hsqldb:file:C:\\workspace\\GameRaingWebService\\resources\\database\\gameRating";
+//private static final String URL = "jdbc:hsqldb:file:C:\\workspace\\GameRaingWebService\\resources\\database\\gameRating";
 //jdbc:hsqldb:file:C:\workspace\GameRaingWebService\resources\database\gameRating
 //jdbc:hsqldb:file:C:\Users\lmacedo\git\GameRatingWebService\resources\database\gameRating
 	

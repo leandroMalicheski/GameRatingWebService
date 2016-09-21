@@ -33,7 +33,7 @@ public class GameServices {
 	@RequestMapping(value="/addVisitedTime")
     public void addVisitedTime(@RequestParam(value="gameId") String id, @RequestParam(value="userId") String userLogin) {
 		User user = UserDAOImpl.getInstance().getUserByID(Long.valueOf(userLogin));
-		gameHistoryDAO.addVisitedTime(id,user.getLogin());
+		gameDAO.addVisitedTime(id,user.getLogin());
 	}
 	@RequestMapping(value="/getJogoById")
     public Game getJogoById(@RequestParam(value="id") String id) {
@@ -54,6 +54,8 @@ public class GameServices {
 	
 	@RequestMapping(value="/updateGame", method=RequestMethod.POST)
 	public void updateGame(@RequestBody Game game) {
+		String userResponsible = UserDAOImpl.getInstance().getUserByID(new Long(game.getUserTempId())).getLogin();
+		gameHistoryDAO.addEditInfo(game, gameDAO.getGameById(String.valueOf(game.getId())), userResponsible);
 		gameDAO.update(game);
 	}
 	
@@ -76,6 +78,5 @@ public class GameServices {
 		game.setRatingMedio(Util.calcularRateMedio(game));
 		gameDAO.addGame(game);
 		gameDAO.addRate(gameDAO.getGameIdByName(game.getName()),game);
-		gameHistoryDAO.addHistory(gameDAO.getGameIdByName(game.getName()));
 	}
 }

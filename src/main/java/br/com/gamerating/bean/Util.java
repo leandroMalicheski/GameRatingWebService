@@ -11,12 +11,13 @@ import br.com.gamerating.dao.GameDAO;
 import br.com.gamerating.dao.impl.GameDAOImpl;
 
 public class Util {
-	private String passwordGenerated;
-	private String passwordEncrypted;
-	private String reputation;
 	static Util instance;
 	public static final String PASSWORD_KEY = "as45u5hdais23he";
 	public static final String SALT_KEY = "feacbc02a3a697b0";
+
+	private String passwordGenerated;
+	private String passwordEncrypted;
+	private String reputation;
 
 	public static Util getInstance(){
 		if(instance == null){

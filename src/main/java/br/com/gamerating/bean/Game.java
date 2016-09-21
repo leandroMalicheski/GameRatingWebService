@@ -1,22 +1,26 @@
 package br.com.gamerating.bean;
 
 public class Game {
+	long id;
+
 	String name;
 	String description;
 	String launchDate;
 	String platforms;
 	String devs;
+	String visitedDate;
+	String userLogin;
+	
 	boolean isVisible;
-	long id;
 	int ratingMedio;
+	int visitedTimes;
 	
 	int userTempId;
 	int ratingJogabilidade;
 	int ratingDiversao;
 	int ratingAudio;
 	int ratingImersao;
-	
-	
+
 	public String getName() {
 		return name;
 	}
@@ -97,5 +101,23 @@ public class Game {
 	}
 	public void setUserTempId(int userTempId) {
 		this.userTempId = userTempId;
+	}
+	public int getVisitedTimes() {
+		return visitedTimes;
+	}
+	public void setVisitedTimes(int visitedTimes) {
+		this.visitedTimes = visitedTimes;
+	}
+	public String getVisitedDate() {
+		return visitedDate;
+	}
+	public void setVisitedDate(String visitedDate) {
+		this.visitedDate = visitedDate;
+	}
+	public String getUserLogin() {
+		return userLogin;
+	}
+	public void setUserLogin(String userLogin) {
+		this.userLogin = userLogin;
 	}	
 }

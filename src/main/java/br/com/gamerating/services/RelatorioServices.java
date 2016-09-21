@@ -5,43 +5,41 @@ import java.util.ArrayList;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.gamerating.bean.Game;
+import br.com.gamerating.bean.Topic;
 import br.com.gamerating.dao.GameDAO;
-import br.com.gamerating.dao.GameHistoryDAO;
-import br.com.gamerating.dao.TopicHistoryDAO;
+import br.com.gamerating.dao.TopicDAO;
 import br.com.gamerating.dao.impl.GameDAOImpl;
-import br.com.gamerating.dao.impl.GameHistoryDAOImpl;
-import br.com.gamerating.dao.impl.TopicHistoryDAOImpl;
-import br.com.gamerating.vo.GameHistory;
-import br.com.gamerating.vo.TopicHistory;
+import br.com.gamerating.dao.impl.TopicDAOImpl;
+import br.com.gamerating.vo.GameVo;
 
 @RestController
 public class RelatorioServices {
 	GameDAO gameDAO = GameDAOImpl.getInstance();
-	GameHistoryDAO gameHistoryDAO = GameHistoryDAOImpl.getInstance();
-	TopicHistoryDAO topicHistoryDAO = TopicHistoryDAOImpl.getInstance();
+	TopicDAO topicDAO = TopicDAOImpl.getInstance();
 	
 	@RequestMapping(value="/listNumTopicsGame")
-    public ArrayList<GameHistory> listNumTopicsGame() {
-		return gameHistoryDAO.listNumTopicsGame();
+    public ArrayList<GameVo> listNumTopicsGame() {
+		return gameDAO.listNumTopicsGame();
     }
 	
 	@RequestMapping(value="/listNumCommentsGame")
-    public ArrayList<GameHistory> listNumCommentsGame() {
-		return gameHistoryDAO.listNumCommentsGame();
+    public ArrayList<GameVo> listNumCommentsGame() {
+		return gameDAO.listNumCommentsGame();
     }
 	
 	@RequestMapping(value="/lastViewGame")
-	public ArrayList<GameHistory> lastViewGame() {
-		return gameHistoryDAO.lastViewGame();
+	public ArrayList<Game> lastViewGame() {
+		return gameDAO.lastViewGame();
 	}
 	
 	@RequestMapping(value="/listNumViewsTopic")
-    public ArrayList<TopicHistory> listNumViewsTopic() {
-		return topicHistoryDAO.listNumViewsTopic();
+    public ArrayList<Topic> listNumViewsTopic() {
+		return topicDAO.listNumViewsTopic();
     }
 	@RequestMapping(value="/lastViewTopic")
-	public ArrayList<TopicHistory> lastViewTopic() {
-		return topicHistoryDAO.lastViewTopic();
+	public ArrayList<Topic> lastViewTopic() {
+		return topicDAO.lastViewTopic();
 	}
 	
 }

@@ -12,6 +12,7 @@ import br.com.gamerating.bean.Comment;
 import br.com.gamerating.bean.Topic;
 import br.com.gamerating.bean.User;
 import br.com.gamerating.dao.TopicDAO;
+import br.com.gamerating.dao.TopicHistoryDAO;
 import br.com.gamerating.dao.UserDAO;
 import br.com.gamerating.dao.impl.TopicDAOImpl;
 import br.com.gamerating.dao.impl.TopicHistoryDAOImpl;
@@ -21,7 +22,8 @@ import br.com.gamerating.dao.impl.UserDAOImpl;
 public class TopicServices {
 	TopicDAO topicDAO = TopicDAOImpl.getInstance();	
 	UserDAO userDao = UserDAOImpl.getInstance();
-
+	TopicHistoryDAO topicHistoryDAO = TopicHistoryDAOImpl.getInstance();
+	
 	@RequestMapping(value="/listHideTopics")
 	public ArrayList<Topic> listHideTopics() {
 		return topicDAO.listHideTopics();
@@ -65,7 +67,12 @@ public class TopicServices {
 	@RequestMapping(value="/getTopicById")
 	public Topic getTopicById(@RequestParam(value="topicId") String id, @RequestParam(value="userId") String userId) {
 		User user = UserDAOImpl.getInstance().getUserByID(Long.valueOf(userId));
-		TopicHistoryDAOImpl.getInstance().addVisitedTime(user.getLogin(),id);
+		topicDAO.addVisitedTime(user.getLogin(),id);
+		return topicDAO.getTopicById(id);
+    }
+	
+	@RequestMapping(value="/getTopicByIdEdit")
+	public Topic getTopicById(@RequestParam(value="id") String id) {
 		return topicDAO.getTopicById(id);
     }
 	
@@ -75,8 +82,6 @@ public class TopicServices {
 		user.setTopics(user.getTopics()+1);
 		userDao.updateTopics(user);
 		topicDAO.add(topic);
-		
-		TopicHistoryDAOImpl.getInstance().addHistory(topicDAO.getTopicByTitle(topic));
     }
 	
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
@@ -86,6 +91,8 @@ public class TopicServices {
 	
 	@RequestMapping(value="/updateTopic", method=RequestMethod.POST)
 	public void updateTopic(@RequestBody Topic topic) {
+		String userResponsible = userDao.getUserByID(Long.valueOf(topic.getUserId())).getLogin();
+		topicHistoryDAO.addEditInfo(topic, topicDAO.getTopicById(String.valueOf(topic.getId())),userResponsible);
 		topicDAO.updateTopic(topic);
 	}
 	

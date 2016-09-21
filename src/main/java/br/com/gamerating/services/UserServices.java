@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.gamerating.bean.User;
 import br.com.gamerating.bean.Util;
 import br.com.gamerating.dao.UserDAO;
+import br.com.gamerating.dao.UserHistoryDAO;
 import br.com.gamerating.dao.impl.UserDAOImpl;
+import br.com.gamerating.dao.impl.UserHistoryDAOImpl;
 
 @RestController
 public class UserServices {
 	UserDAO userDao = UserDAOImpl.getInstance();
+	UserHistoryDAO userHistoryDAO = UserHistoryDAOImpl.getInstance();
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
     public User login(@RequestBody User user) {
@@ -90,6 +93,7 @@ public class UserServices {
 	
 	@RequestMapping(value="/updateUser", method=RequestMethod.POST)
     public void updateUser(@RequestBody User user) {
+		userHistoryDAO.addEditInfo(user, userDao.getUserByID(user.getId()));
 		userDao.updateUser(user);
     }
 	

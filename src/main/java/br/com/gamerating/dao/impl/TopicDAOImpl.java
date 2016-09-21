@@ -15,28 +15,6 @@ import br.com.gamerating.dao.connection.ConnectionDAO;
 
 public class TopicDAOImpl implements TopicDAO{
 	
-	private static final String SELECT_TOPIC_BY_GAME = "SELECT ID,TITLE FROM TOPIC WHERE GAMEID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
-	private static final String SELECT_TOPIC_BY_ID = "SELECT * FROM TOPIC WHERE ID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
-	private static final String SELECT_TOPIC_BY_TITLE = "SELECT ID FROM TOPIC WHERE TITLE=?";
-	private static final String SELECT_TOPIC_BY_USER = "SELECT * FROM TOPIC WHERE USERID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
-	private static final String SELECT_HIDE_TOPICS = "SELECT * FROM TOPIC WHERE VISIBLE=1 AND DELETED=0 ORDER BY CREATIONDATE DESC";
-	private static final String SELECT_HIDE_COMMENTS = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0";
-	private static final String SELECT_HIDE_COMMENTS_BY_TOPIC = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0 AND TOPICID=?";
-	private static final String SELECT_COMMENT_BY_USER = "SELECT * FROM COMMENT WHERE USERID=? AND DELETED=0";
-	private static final String SELECT_COMMENT_BY_ID = "SELECT * FROM COMMENT WHERE ID=? AND DELETED=0";
-	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER = "SELECT C.TOPICID FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
-	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER_TOPIC = "SELECT C.ID,C.BODY FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND TOPICID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
-	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID,C.ID FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND C.VISIBLE=0 AND C.DELETED=0";
-	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,BLOCKED,USERID,GAMEID,DELETED,CREATIONDATE) VALUES(?,?,0,0,0,?,?,0,?)";
-	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID,DELETED) VALUES(?,0,?,?,0)";
-	private static final String UPDATE_TOPIC_CLOSED_STATUS = "UPDATE TOPIC SET CLOSED=? WHERE ID=?";
-	private static final String UPDATE_TOPIC_REMOVE_STATUS = "UPDATE TOPIC SET DELETED=1 WHERE ID=?";
-	private static final String UPDATE_COMMENT_REMOVE_STATUS = "UPDATE COMMENT SET DELETED=1 WHERE ID=?";
-	private static final String UPDATE_COMMENT = "UPDATE COMMENT SET BODY=? WHERE ID=?";
-	private static final String UPDATE_COMMENT_HIDE_FLAG = "UPDATE COMMENT SET VISIBLE=? WHERE ID=?";
-	private static final String UPDATE_TOPIC = "UPDATE TOPIC SET TITLE=?, BODY=? WHERE ID=?";
-	private static final String UPDATE_TOPIC_HIDE_FLAG = "UPDATE TOPIC SET VISIBLE=? WHERE ID=?";
-	
 	public static TopicDAOImpl instance;
 	private Connection conn;
 	
@@ -157,6 +135,7 @@ public class TopicDAOImpl implements TopicDAO{
 				topic.setId(result.getLong("ID"));
 				topic.setTitle(result.getString("TITLE"));
 				topic.setBody(result.getString("BODY"));
+				topic.setVisitedTimes(result.getInt("VISITEDTIMES"));
 				int close = result.getInt("CLOSED");
 				if(close == 1){
 					topic.setClosed(true);
@@ -508,25 +487,99 @@ public class TopicDAOImpl implements TopicDAO{
 	}
 
 	@Override
-	public long getTopicByTitle(Topic topic) {
+	public void addVisitedTime(String login, String id) {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
 		}
-		long retorno = 0;
+		Topic topic = getTopicById(id);
+		int visitedTimes = topic.getVisitedTimes()+1;
 		try {
-			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_TOPIC_BY_TITLE);
-			preparedStatement.setString(1, topic.getTitle());
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_VISITEDTIMES);
+			preparedStatement.setInt(1, visitedTimes);
+			preparedStatement.setDate(2, new Date(Calendar.getInstance().getTimeInMillis()));
+			preparedStatement.setString(3, login);
+			preparedStatement.setString(4, id);
+			preparedStatement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public ArrayList<Topic> listNumViewsTopic() {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<Topic> topicList = new ArrayList<Topic>();
+		
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_TOPIC);
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
-				retorno = result.getLong("ID");
+				Topic topic = new Topic();
+				topic.setTitle(result.getString("TITLE"));
+				topic.setVisitedTimes(result.getInt("VISITEDTIMES"));
+				topicList.add(topic);
 			}
-			return retorno;
+			return topicList;
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return retorno;
+			return topicList;
 		}
 	}
 
+	@Override
+	public ArrayList<Topic> lastViewTopic() {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<Topic> topicList = new ArrayList<Topic>();
+		
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_TOPIC);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				Topic topic = new Topic();
+				topic.setTitle(result.getString("TITLE"));
+				topic.setVisitedDate(result.getString("VISITEDDATE"));
+				topic.setUserLogin(result.getString("USERVISITED"));
+				topicList.add(topic);
+			}
+			return topicList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return topicList;
+		}
+	}
+
+	private static final String SELECT_TOPIC_BY_GAME = "SELECT ID,TITLE FROM TOPIC WHERE GAMEID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
+	private static final String SELECT_TOPIC_BY_ID = "SELECT * FROM TOPIC WHERE ID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
+	private static final String SELECT_TOPIC_BY_USER = "SELECT * FROM TOPIC WHERE USERID=? AND VISIBLE=0 AND DELETED=0 ORDER BY CREATIONDATE DESC";
+	private static final String SELECT_TOPIC = "SELECT TITLE,VISITEDTIMES,VISITEDDATE,USERVISITED FROM TOPIC WHERE VISIBLE=0 AND DELETED=0 ORDER BY VISITEDDATE DESC";
+	
+	private static final String SELECT_HIDE_TOPICS = "SELECT * FROM TOPIC WHERE VISIBLE=1 AND DELETED=0 ORDER BY CREATIONDATE DESC";
+	private static final String SELECT_HIDE_COMMENTS = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0";
+	private static final String SELECT_HIDE_COMMENTS_BY_TOPIC = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0 AND TOPICID=?";
+	
+	private static final String SELECT_COMMENT_BY_USER = "SELECT * FROM COMMENT WHERE USERID=? AND DELETED=0";
+	private static final String SELECT_COMMENT_BY_ID = "SELECT * FROM COMMENT WHERE ID=? AND DELETED=0";
+	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER = "SELECT C.TOPICID FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
+	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER_TOPIC = "SELECT C.ID,C.BODY FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND TOPICID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
+	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID,C.ID FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND C.VISIBLE=0 AND C.DELETED=0";
+	
+	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,VISITEDTIMES,USERID,GAMEID,DELETED,CREATIONDATE) VALUES(?,?,0,0,0,?,?,0,?)";
+	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID,DELETED) VALUES(?,0,?,?,0)";
+	
+	private static final String UPDATE_VISITEDTIMES = "UPDATE TOPIC SET VISITEDTIMES=?,VISITEDDATE=?,USERVISITED=? WHERE ID=?";
+	private static final String UPDATE_TOPIC_CLOSED_STATUS = "UPDATE TOPIC SET CLOSED=? WHERE ID=?";
+	private static final String UPDATE_TOPIC_REMOVE_STATUS = "UPDATE TOPIC SET DELETED=1 WHERE ID=?";
+	private static final String UPDATE_COMMENT_REMOVE_STATUS = "UPDATE COMMENT SET DELETED=1 WHERE ID=?";
+	private static final String UPDATE_COMMENT = "UPDATE COMMENT SET BODY=? WHERE ID=?";
+	private static final String UPDATE_COMMENT_HIDE_FLAG = "UPDATE COMMENT SET VISIBLE=? WHERE ID=?";
+	private static final String UPDATE_TOPIC = "UPDATE TOPIC SET TITLE=?, BODY=? WHERE ID=?";
+	private static final String UPDATE_TOPIC_HIDE_FLAG = "UPDATE TOPIC SET VISIBLE=? WHERE ID=?";
 }

@@ -1,14 +1,9 @@
 package br.com.gamerating.dao;
 
-import java.util.ArrayList;
-
-import br.com.gamerating.vo.TopicHistory;
+import br.com.gamerating.bean.Topic;
 
 public interface TopicHistoryDAO {
 
-	void addHistory(long id);
-	public void addVisitedTime(String userLogin, String id);
-	ArrayList<TopicHistory> listNumViewsTopic();
-	ArrayList<TopicHistory> lastViewTopic();
+	void addEditInfo(Topic newTopicInfo, Topic oldTopicInfo, String userResponsible);
 
 }

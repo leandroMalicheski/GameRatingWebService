@@ -3,14 +3,17 @@ package br.com.gamerating.bean;
 public class Topic {
 
 	long id;
-	String title;
-	String body;
+	long userId;
+	long gameId;
 	boolean isClosed;
 	boolean isVisible;
 	boolean checked;
 	boolean isBlocked;
-	long userId;
-	long gameId;
+	String title;
+	String body;
+	String visitedDate;
+	String userLogin;
+	int visitedTimes;
 	
 	public long getId() {
 		return id;
@@ -65,6 +68,24 @@ public class Topic {
 	}
 	public void setGameId(long gameId) {
 		this.gameId = gameId;
+	}
+	public int getVisitedTimes() {
+		return visitedTimes;
+	}
+	public void setVisitedTimes(int visitedTimes) {
+		this.visitedTimes = visitedTimes;
+	}
+	public String getVisitedDate() {
+		return visitedDate;
+	}
+	public void setVisitedDate(String visitedDate) {
+		this.visitedDate = visitedDate;
+	}
+	public String getUserLogin() {
+		return userLogin;
+	}
+	public void setUserLogin(String userLogin) {
+		this.userLogin = userLogin;
 	}
 
 }

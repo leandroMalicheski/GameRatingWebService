@@ -11,18 +11,10 @@ import java.util.Calendar;
 import br.com.gamerating.bean.Game;
 import br.com.gamerating.dao.GameDAO;
 import br.com.gamerating.dao.connection.ConnectionDAO;
+import br.com.gamerating.vo.GameVo;
 
 public class GameDAOImpl implements GameDAO {
-	private static final String SELECT_GAME_BY_NAME_SEARCH = "SELECT ID,NAME FROM GAME WHERE NAME LIKE ?";
-	private static final String SELECT_GAME_BY_NAME = "SELECT * FROM GAME WHERE NAME=?";
-	private static final String SELECT_GAME_BY_ID = "SELECT * FROM GAME WHERE ID=? AND REMOVED=0";	
-	private static final String SELECT_GAME_RATE = "SELECT * FROM GAME AS G,RATE AS R WHERE G.ID = R.GAMEID AND R.USERID = ? AND R.GAMEID = ?";	
-	private static final String SELECT_GAME_RATE_BY_GAME = "SELECT * FROM GAME WHERE GAMEID = ?";	
-	private static final String UPDATE_GAME_HIDE_FLAG = "UPDATE GAME SET VISIBLE=? WHERE ID=?";
-	private static final String UPDATE_GAME = "UPDATE GAME SET NAME=?,DESCRIPTION=?,LAUNCHDATE=?,PLATAFORMS=?,DEVELOPERS=?,RATINGMEDIO=? WHERE ID=?";
-	private static final String UPDATE_GAME_RATE = "UPDATE RATE SET JOGABILITY=?,FUN=?,SOUND=?,IMMERSION=? WHERE USERID=? AND GAMEID=?";
-	private static final String INSERT_GAME_RATE = "INSERT INTO RATE(USERID,GAMEID,JOGABILITY,FUN,SOUND,IMMERSION) VALUES(?,?,?,?,?,?)";
-	private static final String INSERT_GAME = "INSERT INTO GAME(NAME,DESCRIPTION,LAUNCHDATE,PLATAFORMS,DEVELOPERS,RATINGMEDIO,VISIBLE,REMOVED,CREATEDATE) VALUES(?,?,?,?,?,?,0,0,?)";
+	
 	public static GameDAOImpl instance;
 	private Connection conn;
 	
@@ -78,6 +70,7 @@ public class GameDAOImpl implements GameDAO {
 				game.setPlatforms(result.getString("PLATAFORMS"));
 				game.setDevs(result.getString("DEVELOPERS"));
 				game.setRatingMedio(result.getInt("RATINGMEDIO"));
+				game.setVisitedTimes(result.getInt("VISITEDTIMES"));
 				int visibility = result.getInt("VISIBLE");
 				if(visibility == 0) {
 					game.setIsVisible(true);
@@ -301,4 +294,117 @@ public class GameDAOImpl implements GameDAO {
 			return id;
 		}
 	}
+	
+	@Override
+	public void addVisitedTime(String id, String userLogin) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		Game game = getGameById(id);
+		int visitedTimes = game.getVisitedTimes()+1;
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_VISITEDTIMES);
+			preparedStatement.setInt(1, visitedTimes);
+			preparedStatement.setDate(2, new Date(Calendar.getInstance().getTimeInMillis()));
+			preparedStatement.setString(3, userLogin);
+			preparedStatement.setString(4, id);
+			preparedStatement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public ArrayList<GameVo> listNumTopicsGame() {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<GameVo> gameList = new ArrayList<GameVo>();
+		
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_GAME_TOPICS);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				GameVo gameVo = new GameVo();
+				gameVo.setGameName(result.getString("NAME"));
+				gameVo.setNumTopics(result.getInt("TOPICS"));
+				gameList.add(gameVo);
+			}
+			return gameList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return gameList;
+		}
+	}
+	
+	@Override
+	public ArrayList<GameVo> listNumCommentsGame() {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<GameVo> gameHistoryVoList = new ArrayList<GameVo>();
+		
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_GAME_COMMENTS);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				GameVo gameHistoryVo = new GameVo();
+				gameHistoryVo.setGameName(result.getString("NAME"));
+				gameHistoryVo.setNumComments(result.getInt("COMMENTS"));
+				gameHistoryVoList.add(gameHistoryVo);
+			}
+			return gameHistoryVoList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return gameHistoryVoList;
+		}
+	}
+	
+	@Override
+	public ArrayList<Game> lastViewGame() {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		ArrayList<Game> gameList = new ArrayList<Game>();
+		
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_GAME_LAST_VISITED_DATE);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				Game game = new Game();
+				game.setName(result.getString("NAME"));
+				game.setVisitedDate(result.getString("VISITEDDATE"));
+				game.setUserLogin(result.getString("USERVISITED"));
+				gameList.add(game);
+			}
+			return gameList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return gameList;
+		}
+	}
+	
+	private static final String SELECT_GAME_BY_NAME_SEARCH = "SELECT ID,NAME FROM GAME WHERE VISIBLE=0 AND REMOVED=0 AND NAME LIKE ?";
+	private static final String SELECT_GAME_BY_NAME = "SELECT * FROM GAME WHERE VISIBLE=0 AND REMOVED=0 AND NAME=?";
+	private static final String SELECT_GAME_BY_ID = "SELECT * FROM GAME WHERE VISIBLE=0 AND REMOVED=0 AND ID=?";	
+	
+	private static final String SELECT_GAME_RATE = "SELECT * FROM GAME AS G,RATE AS R WHERE G.ID = R.GAMEID AND R.USERID = ? AND R.GAMEID = ?";	
+	private static final String SELECT_GAME_RATE_BY_GAME = "SELECT * FROM GAME WHERE GAMEID = ?";	
+	private static final String SELECT_GAME_TOPICS = "SELECT G.NAME , COUNT(T.ID) AS TOPICS FROM GAME AS G,TOPIC AS T WHERE G.ID=T.GAMEID GROUP BY G.ID";
+	private static final String SELECT_GAME_COMMENTS = "SELECT G.NAME , COUNT(C.ID) AS COMMENTS FROM GAME AS G,TOPIC AS T, COMMENT AS C WHERE G.ID=T.GAMEID AND T.ID=C.TOPICID GROUP BY G.ID";
+	private static final String SELECT_GAME_LAST_VISITED_DATE = "SELECT NAME, VISITEDDATE, USERVISITED FROM GAME WHERE VISIBLE=0 AND REMOVED=0 ORDER BY VISITEDDATE DESC";
+	
+	private static final String UPDATE_GAME_HIDE_FLAG = "UPDATE GAME SET VISIBLE=? WHERE ID=?";
+	private static final String UPDATE_GAME = "UPDATE GAME SET NAME=?,DESCRIPTION=?,LAUNCHDATE=?,PLATAFORMS=?,DEVELOPERS=?,RATINGMEDIO=? WHERE ID=?";
+	private static final String UPDATE_GAME_RATE = "UPDATE RATE SET JOGABILITY=?,FUN=?,SOUND=?,IMMERSION=? WHERE USERID=? AND GAMEID=?";
+	private static final String UPDATE_VISITEDTIMES = "UPDATE GAME SET VISITEDTIMES=?,VISITEDDATE=?,USERVISITED=? WHERE ID=?";
+	
+	private static final String INSERT_GAME_RATE = "INSERT INTO RATE(USERID,GAMEID,JOGABILITY,FUN,SOUND,IMMERSION) VALUES(?,?,?,?,?,?)";
+	private static final String INSERT_GAME = "INSERT INTO GAME(NAME,DESCRIPTION,LAUNCHDATE,PLATAFORMS,DEVELOPERS,RATINGMEDIO,VISIBLE,REMOVED,CREATEDATE,VISITEDTIMES) VALUES(?,?,?,?,?,?,0,0,?,0)";
 }
