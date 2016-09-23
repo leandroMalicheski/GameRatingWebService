@@ -67,16 +67,22 @@ public class GameServices {
 	@RequestMapping(value="/addRate", method=RequestMethod.POST)
 	public void addGameRate(@RequestBody Game game) {
 		gameDAO.addRate(game);
+		game.setRatingMedio(Util.calcularRateMedio(game));
+		gameDAO.update(game);
 	}
 	
 	@RequestMapping(value="/updateRate", method=RequestMethod.POST)
 	public void updateGameRate(@RequestBody Game game) {
 		gameDAO.updateRate(game);
+		game.setRatingMedio(Util.calcularRateMedio(game));
+		gameDAO.update(game);
 	}
 	@RequestMapping(value="/addGame", method=RequestMethod.POST)
 	public void addGame(@RequestBody Game game) {
-		game.setRatingMedio(Util.calcularRateMedio(game));
 		gameDAO.addGame(game);
-		gameDAO.addRate(gameDAO.getGameIdByName(game.getName()),game);
+		game.setId(gameDAO.getGameIdByName(game.getName()));
+		gameDAO.addRate(game.getId(),game);
+		game.setRatingMedio(Util.calcularRateMedio(game));
+		gameDAO.update(game);
 	}
 }

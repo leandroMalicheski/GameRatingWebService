@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import br.com.gamerating.dao.GameDAO;
+import br.com.gamerating.dao.impl.ConfigurationDAOImpl;
 import br.com.gamerating.dao.impl.GameDAOImpl;
 
 public class Util {
@@ -75,26 +76,56 @@ public class Util {
 	}
 
 	public static int calcularRateMedio(Game game) {
-		int audio = game.getRatingAudio();
-		int diversao = game.getRatingDiversao();
-		int imersao = game.getRatingImersao();
-		int jogabilidade = game.getRatingJogabilidade();
-		int total = 0;
-		int retorno = 0;
-		if(game.getRatingMedio() == 0){
-			total = audio + diversao + imersao + jogabilidade;
-			retorno = total/4;
+		GameDAO gameDao = GameDAOImpl.getInstance();
+		ArrayList<Game> gameList = gameDao.getRateInformationByGame(game.getId());
+		float audioMedio = media(prepareRate("audio", gameList),gameList.size());
+		float diversaoMedio = media(prepareRate("diversao", gameList),gameList.size());
+		float imersaoMedio = media(prepareRate("imersao", gameList),gameList.size());
+		float jogabilidadeMedio = media(prepareRate("jogabilidade", gameList),gameList.size());
+		
+		RateConfiguration rateConfiguration = ConfigurationDAOImpl.getInstance().getRateConfiguration();
+		
+		float participacelAudio = calcularContribuicao(audioMedio, rateConfiguration.getSound());
+		float participacelDiversao = calcularContribuicao(diversaoMedio, rateConfiguration.getFun());
+		float participacelImersao = calcularContribuicao(imersaoMedio, rateConfiguration.getImmersion());
+		float participacelJogabilidade = calcularContribuicao(jogabilidadeMedio, rateConfiguration.getJogability());
+		
+		float partTotalAudio = calcularContribuicaoTotal(audioMedio,participacelAudio);
+		float partTotalDiversao = calcularContribuicaoTotal(diversaoMedio,participacelDiversao);
+		float partTotalImersao = calcularContribuicaoTotal(imersaoMedio,participacelImersao);
+		float partTotalJogabilidade = calcularContribuicaoTotal(jogabilidadeMedio,participacelJogabilidade);
+		
+		float total = partTotalAudio + partTotalDiversao + partTotalImersao + partTotalJogabilidade;
+		float pesoTotal = rateConfiguration.getSound() + rateConfiguration.getFun() + rateConfiguration.getImmersion() + rateConfiguration.getJogability();
+		
+		float oneStar = pesoTotal/5;
+		float twoStar = oneStar*2;
+		float threeStar = oneStar*3;
+		float fourStar = oneStar*4;
+		
+		if(total <= oneStar){
+			return 1;
+		}else if(total <= twoStar){
+			return 2;
+		}else if(total <= threeStar){
+			return 3;
+		}else if(total <= fourStar){
+			return 4;
 		}else{
-			GameDAO gameDao = GameDAOImpl.getInstance();
-			ArrayList<Game> gameList = gameDao.getRateInformationByGame(game.getId());
-			audio = prepareRate("audio", gameList);
-			diversao = prepareRate("diversao", gameList);
-			imersao = prepareRate("imersao", gameList);
-			jogabilidade = prepareRate("jogabilidade", gameList);
-			total = audio + diversao + imersao + jogabilidade;
-			retorno = total/4;
+			return 5;
 		}
-		return retorno;
+	}
+
+	private static float calcularContribuicaoTotal(float audioMedio, float participacelAudio) {
+		return audioMedio*participacelAudio;
+	}
+
+	private static float calcularContribuicao(float categoria, float peso) {
+		return peso/categoria;
+	}
+	
+	private static float media(float somaTotal, float totalItens) {
+		return somaTotal/totalItens;
 	}
 
 	private static int prepareRate(String string, ArrayList<Game> gameList) {

@@ -3,10 +3,13 @@ package br.com.gamerating.services;
 import java.sql.Date;
 import java.util.Calendar;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.gamerating.bean.RateConfiguration;
 import br.com.gamerating.bean.Topic;
 import br.com.gamerating.dao.ConfigurationDAO;
 import br.com.gamerating.dao.TopicDAO;
@@ -40,5 +43,15 @@ public class SystemToolsServices {
 		}else{
 			return 1;
 		}
+	}
+	
+	@RequestMapping(value="/getRateConfiguration")
+    public RateConfiguration getRateConfiguration() {
+		return configurationDAO.getRateConfiguration();
+    }
+
+	@RequestMapping(value="/updateRateConfiguration", method=RequestMethod.POST)
+    public void updateRateConfiguration(@RequestBody RateConfiguration rateConfiguration) {
+		configurationDAO.updateRateConfiguration(rateConfiguration);
 	}
 }
