@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.gamerating.bean.Comment;
 import br.com.gamerating.bean.Topic;
 import br.com.gamerating.bean.User;
+import br.com.gamerating.dao.CommentHistoryDAO;
 import br.com.gamerating.dao.TopicDAO;
 import br.com.gamerating.dao.TopicHistoryDAO;
 import br.com.gamerating.dao.UserDAO;
+import br.com.gamerating.dao.impl.CommentHistoryDAOImpl;
 import br.com.gamerating.dao.impl.TopicDAOImpl;
 import br.com.gamerating.dao.impl.TopicHistoryDAOImpl;
 import br.com.gamerating.dao.impl.UserDAOImpl;
@@ -23,6 +25,7 @@ public class TopicServices {
 	TopicDAO topicDAO = TopicDAOImpl.getInstance();	
 	UserDAO userDao = UserDAOImpl.getInstance();
 	TopicHistoryDAO topicHistoryDAO = TopicHistoryDAOImpl.getInstance();
+	CommentHistoryDAO commentHistoryDAO = CommentHistoryDAOImpl.getInstance();
 	
 	@RequestMapping(value="/listHideTopics")
 	public ArrayList<Topic> listHideTopics() {
@@ -86,6 +89,7 @@ public class TopicServices {
 	
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
 	public void updateComment(@RequestBody Comment comment) {
+		commentHistoryDAO.addEditInfo(comment,topicDAO.getCommentById(String.valueOf(comment.getId())));
 		topicDAO.updateComment(comment);
 	}
 	

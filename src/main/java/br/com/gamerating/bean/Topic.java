@@ -1,5 +1,7 @@
 package br.com.gamerating.bean;
 
+import java.sql.Date;
+
 public class Topic {
 
 	long id;
@@ -14,6 +16,7 @@ public class Topic {
 	String visitedDate;
 	String userLogin;
 	int visitedTimes;
+	Date createdDate;
 	
 	public long getId() {
 		return id;
@@ -86,6 +89,12 @@ public class Topic {
 	}
 	public void setUserLogin(String userLogin) {
 		this.userLogin = userLogin;
+	}
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
 }

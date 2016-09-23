@@ -136,6 +136,7 @@ public class TopicDAOImpl implements TopicDAO{
 				topic.setTitle(result.getString("TITLE"));
 				topic.setBody(result.getString("BODY"));
 				topic.setVisitedTimes(result.getInt("VISITEDTIMES"));
+				topic.setCreatedDate(result.getDate("CREATIONDATE"));
 				int close = result.getInt("CLOSED");
 				if(close == 1){
 					topic.setClosed(true);
