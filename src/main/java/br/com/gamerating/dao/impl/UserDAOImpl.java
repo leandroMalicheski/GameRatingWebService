@@ -129,6 +129,7 @@ public class UserDAOImpl implements UserDAO {
 				usuarioRetorno.setDislikes(result.getInt("DISLIKES"));
 				usuarioRetorno.setComments(result.getInt("COMMENTS"));
 				usuarioRetorno.setTopics(result.getInt("TOPICS"));
+				usuarioRetorno.setImg(result.getString("IMAGE"));
 				int blocked = result.getInt("BLOCKED");
 				if(blocked == 0){
 					usuarioRetorno.setBlocked(false);				

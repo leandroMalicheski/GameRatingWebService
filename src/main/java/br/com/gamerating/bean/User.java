@@ -9,6 +9,7 @@ public class User {
 	String password;
 	String passwordConfirm;
 	String passwordTip;
+	String img;
 	int topics;
 	int comments;
 	int profile;
@@ -144,5 +145,13 @@ public class User {
 
 	public void setComments(int comments) {
 		this.comments = comments;
+	}
+
+	public String getImg() {
+		return img;
+	}
+
+	public void setImg(String img) {
+		this.img = img;
 	}
 }
