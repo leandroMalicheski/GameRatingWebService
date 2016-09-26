@@ -23,6 +23,12 @@ public class GameServices {
 	GameDAO gameDAO = GameDAOImpl.getInstance();
 	GameHistoryDAO gameHistoryDAO = GameHistoryDAOImpl.getInstance();
 	
+	@RequestMapping(value="/listGamesByNameAdm")
+	public ArrayList<Game> listGamesByNameAdm(@RequestParam(value="search") String search) {
+		search.toLowerCase();
+		search = WordUtils.capitalize(search);
+		return gameDAO.searchByNameAdm(search);
+	}
 	@RequestMapping(value="/listGamesByName")
     public ArrayList<Game> listGamesByName(@RequestParam(value="search") String search) {
 		search.toLowerCase();

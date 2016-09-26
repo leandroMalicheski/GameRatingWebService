@@ -25,4 +25,5 @@ public interface UserDAO {
 	public void addDislike(String profileId, String userId);
 	public void updateUserReputation(User userProfile);
 	public void updateUser(User user);
+	public User getUserByLogin(String login);
 }

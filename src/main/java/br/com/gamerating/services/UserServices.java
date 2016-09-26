@@ -19,11 +19,28 @@ import br.com.gamerating.dao.impl.UserHistoryDAOImpl;
 public class UserServices {
 	UserDAO userDao = UserDAOImpl.getInstance();
 	UserHistoryDAO userHistoryDAO = UserHistoryDAOImpl.getInstance();
+	private int tentativa = 0;
 	
 	@RequestMapping(value="/login", method=RequestMethod.POST)
     public User login(@RequestBody User user) {
-		user.setPassword(Util.getInstance().encryptPassword(user.getPassword()));
-		return userDao.login(user);
+		if(tentativa < 2){
+			user.setPassword(Util.getInstance().encryptPassword(user.getPassword()));
+			user = userDao.login(user);
+			if(user.getLogin() == null){
+				tentativa = tentativa+1;
+			}else{
+				tentativa = 0;
+			}
+		}else{
+			user = userDao.getUserByLogin(user.getLogin());
+			if(!user.isBlocked()){
+				userDao.updateBlockStatus(user);				
+			}
+			user.setLogin(null);
+			tentativa = 0;
+		}
+		
+		return user;
     }
 	
 	@RequestMapping(value="/listUserByName")
@@ -38,11 +55,11 @@ public class UserServices {
     }
 	
 	@RequestMapping(value="/generateUserPassword", method=RequestMethod.POST, produces = "application/json")
-	public Util generateUserPassword(@RequestBody User user) {
+	public void generateUserPassword(@RequestBody User user) {
 		String newPassword = Util.getInstance().generatePassword();
 		user.setPassword(Util.getInstance().encryptPassword(newPassword));
+		Util.sendEmail(newPassword, user);
 		userDao.updatePasswordByLogin(user);
-		return Util.getInstance();
 	}
 	
 	@RequestMapping(value="/updateUserPassword", method=RequestMethod.POST, produces = "application/json")
@@ -105,13 +122,11 @@ public class UserServices {
 	
 	@RequestMapping(value="/resetUserPassword")
     public void resetUserPassword(@RequestParam(value="login") String login) {
-		User user = new User();
-		user.setLogin(login);
+		User user = userDao.getUserByLogin(login);
 		String password = Util.getInstance().generatePassword();
 		user.setPassword(Util.getInstance().encryptPassword(password));
 		userDao.updatePasswordByLogin(user);
-		
-		//TODO: EnviarEmail
+		Util.sendEmail(password, user);
 	}
 	
 	@RequestMapping(value="/updateBlockStatus", method=RequestMethod.POST)

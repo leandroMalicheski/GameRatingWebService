@@ -8,6 +8,7 @@ import br.com.gamerating.vo.GameVo;
 public interface GameDAO {
 	
 	public ArrayList<Game> searchByName(String pattern);
+	public ArrayList<Game> searchByNameAdm(String search);
 	public ArrayList<Game> getRateInformationByGame(long id);
 	public ArrayList<Game> lastViewGame();
 	public ArrayList<GameVo> listNumTopicsGame();

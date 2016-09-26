@@ -259,7 +259,7 @@ public class UserDAOImpl implements UserDAO {
 			this.conn = ConnectionDAO.getInstance().getConnection();
 		}
 		int blocked = 0;
-		if(user.isBlocked()){
+		if(!user.isBlocked()){
 			blocked = 1;
 		}
 		try {
@@ -422,7 +422,51 @@ public class UserDAOImpl implements UserDAO {
 		}
 	}
 
+	@Override
+	public User getUserByLogin(String login) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		User usuarioRetorno = new User();
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_USER_BY_LOGIN);
+			preparedStatement.setString(1, login);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				usuarioRetorno.setId(result.getInt("ID"));
+				usuarioRetorno.setName(result.getString("NAME"));
+				usuarioRetorno.setEmail(result.getString("EMAIL"));
+				usuarioRetorno.setLogin(result.getString("LOGIN"));
+				usuarioRetorno.setPassword(result.getString("PASSWORD"));
+				usuarioRetorno.setProfile(result.getInt("PROFILE"));
+				usuarioRetorno.setLikes(result.getInt("LIKES"));
+				usuarioRetorno.setDislikes(result.getInt("DISLIKES"));
+				usuarioRetorno.setComments(result.getInt("COMMENTS"));
+				usuarioRetorno.setTopics(result.getInt("TOPICS"));
+				int blocked = result.getInt("BLOCKED");
+				if(blocked == 0){
+					usuarioRetorno.setBlocked(false);				
+				}else{
+					usuarioRetorno.setBlocked(true);					
+				}
+				int visible = result.getInt("VISIBLE");
+				if(visible == 0){
+					usuarioRetorno.setVisible(false);				
+				}else{
+					usuarioRetorno.setVisible(true);					
+				}
+			}
+			return usuarioRetorno;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return usuarioRetorno;
+		}
+	}
+	
 	private static final String SELECT_USER = "SELECT * FROM USER WHERE ID=?";
+	private static final String SELECT_USER_BY_LOGIN = "SELECT * FROM USER WHERE LOGIN=?";
 	private static final String SELECT_USER_REPUTARION = "SELECT * FROM REPUTATION WHERE PROFILEID=? AND USERID=?";
 	private static final String SELECT_USER_BY_NAME = "SELECT ID,LOGIN FROM USER WHERE LOGIN LIKE ?";
 	
@@ -437,9 +481,10 @@ public class UserDAOImpl implements UserDAO {
 	private static final String DISABLE_USER = "UPDATE USER SET VISIBLE=? WHERE ID=?";
 	private static final String BLOCK_USER = "UPDATE USER SET BLOCKED=? WHERE ID=?";
 	private static final String USER_DATA_VALIDATION = "SELECT * FROM USER WHERE LOGIN=? AND EMAIL=? AND PASSWORDTIP=?";
-	private static final String LOGIN = "SELECT * FROM USER WHERE LOGIN=? AND PASSWORD=?";
+	private static final String LOGIN = "SELECT * FROM USER WHERE LOGIN=? AND PASSWORD=? AND BLOCKED = 0";
 	private static final String LOGIN_VALIDATION = "SELECT * FROM USER WHERE LOGIN=?";
 	
 	private static final String INSERT_USER = "INSERT INTO USER(NAME,EMAIL,LOGIN,PASSWORD,PASSWORDTIP,PROFILE,LIKES,DISLIKES,BLOCKED,VISIBLE,COMMENTS,TOPICS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 	private static final String INSERT_REPUTATION = "INSERT INTO REPUTATION(PROFILEID,USERID,ISLIKE) VALUES (?,?,?)";
+
 }

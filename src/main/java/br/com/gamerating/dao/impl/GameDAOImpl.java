@@ -26,6 +26,31 @@ public class GameDAOImpl implements GameDAO {
 	}
 	
 	@Override
+	public ArrayList<Game> searchByNameAdm(String pattern) {
+		if(this.conn == null){
+			this.conn = ConnectionDAO.getInstance().getConnection();
+		}
+		String patternPrepered = "%" + pattern + "%";
+		ArrayList<Game> gamesList = new ArrayList<Game>();
+		try {
+			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_GAME_BY_NAME_SEARCH_ADM);
+			preparedStatement.setString(1, patternPrepered);
+			ResultSet result = preparedStatement.executeQuery();
+			
+			while(result.next()){
+				Game gameTemp = new Game();
+				gameTemp.setId(result.getLong("ID"));
+				gameTemp.setName(result.getString("NAME"));
+				gamesList.add(gameTemp);
+			}
+			return gamesList;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return gamesList;
+		}
+	}
+	@Override
 	public ArrayList<Game> searchByName(String pattern) {
 		if(this.conn == null){
 			this.conn = ConnectionDAO.getInstance().getConnection();
@@ -391,8 +416,9 @@ public class GameDAOImpl implements GameDAO {
 	}
 	
 	private static final String SELECT_GAME_BY_NAME_SEARCH = "SELECT ID,NAME FROM GAME WHERE VISIBLE=0 AND REMOVED=0 AND NAME LIKE ?";
+	private static final String SELECT_GAME_BY_NAME_SEARCH_ADM = "SELECT ID,NAME FROM GAME WHERE REMOVED=0 AND NAME LIKE ?";
 	private static final String SELECT_GAME_BY_NAME = "SELECT * FROM GAME WHERE VISIBLE=0 AND REMOVED=0 AND NAME=?";
-	private static final String SELECT_GAME_BY_ID = "SELECT * FROM GAME WHERE VISIBLE=0 AND REMOVED=0 AND ID=?";	
+	private static final String SELECT_GAME_BY_ID = "SELECT * FROM GAME WHERE REMOVED=0 AND ID=?";	
 	
 	private static final String SELECT_GAME_RATE = "SELECT * FROM GAME AS G,RATE AS R WHERE G.ID = R.GAMEID AND R.USERID = ? AND R.GAMEID = ?";	
 	private static final String SELECT_GAME_RATE_BY_GAME = "SELECT * FROM RATE WHERE GAMEID = ?";	
