@@ -44,7 +44,12 @@ public class TopicServices {
 	
 	@RequestMapping(value="/getCommentsByTopicId")
 	public ArrayList<Comment> getCommentsByTopicId(@RequestParam(value="id") String id) {
-		return topicDAO.getCommentsByTopicId(id);
+		ArrayList<Comment> commentList = topicDAO.getCommentsByTopicId(id);
+		for (Comment comment : commentList) {
+			User user = userDao.getUserByLogin(comment.getUser());
+			comment.setUserImg(user.getImg());
+		}
+		return commentList;
 	}
 	
 	@RequestMapping(value="/getCommentById")

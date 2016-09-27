@@ -165,6 +165,7 @@ public class UserDAOImpl implements UserDAO {
 				usuarioRetorno.setLikes(result.getInt("LIKES"));
 				usuarioRetorno.setDislikes(result.getInt("DISLIKES"));
 				usuarioRetorno.setComments(result.getInt("COMMENTS"));
+				usuarioRetorno.setImg(result.getString("IMAGE"));
 				usuarioRetorno.setTopics(result.getInt("TOPICS"));
 				int blocked = result.getInt("BLOCKED");
 				if(blocked == 0){
@@ -413,6 +414,7 @@ public class UserDAOImpl implements UserDAO {
 				User userTemp = new User();
 				userTemp.setId(result.getLong("ID"));
 				userTemp.setLogin(result.getString("LOGIN"));
+				userTemp.setImg(result.getString("IMAGE"));
 				usersList.add(userTemp);
 			}
 			return usersList;
@@ -445,6 +447,7 @@ public class UserDAOImpl implements UserDAO {
 				usuarioRetorno.setDislikes(result.getInt("DISLIKES"));
 				usuarioRetorno.setComments(result.getInt("COMMENTS"));
 				usuarioRetorno.setTopics(result.getInt("TOPICS"));
+				usuarioRetorno.setImg(result.getString("IMAGE"));
 				int blocked = result.getInt("BLOCKED");
 				if(blocked == 0){
 					usuarioRetorno.setBlocked(false);				
@@ -469,7 +472,7 @@ public class UserDAOImpl implements UserDAO {
 	private static final String SELECT_USER = "SELECT * FROM USER WHERE ID=?";
 	private static final String SELECT_USER_BY_LOGIN = "SELECT * FROM USER WHERE LOGIN=?";
 	private static final String SELECT_USER_REPUTARION = "SELECT * FROM REPUTATION WHERE PROFILEID=? AND USERID=?";
-	private static final String SELECT_USER_BY_NAME = "SELECT ID,LOGIN FROM USER WHERE LOGIN LIKE ?";
+	private static final String SELECT_USER_BY_NAME = "SELECT ID,LOGIN,IMAGE FROM USER WHERE LOGIN LIKE ?";
 	
 	private static final String UPDATE_PASSWORD = "UPDATE USER SET PASSWORD=? WHERE LOGIN=?";
 	private static final String UPDATE_REPUTATION = "UPDATE REPUTATION SET ISLIKE=? WHERE PROFILEID=? AND USERID=?";

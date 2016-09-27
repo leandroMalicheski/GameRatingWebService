@@ -4,6 +4,7 @@ public class Comment {
 	long id;
 	long userId;
 	long topicId;
+	String userImg;
 
 	String user;
 	String body;
@@ -52,5 +53,11 @@ public class Comment {
 	}
 	public void setChecked(boolean checked) {
 		this.checked = checked;
+	}
+	public String getUserImg() {
+		return userImg;
+	}
+	public void setUserImg(String userImg) {
+		this.userImg = userImg;
 	}	
 }

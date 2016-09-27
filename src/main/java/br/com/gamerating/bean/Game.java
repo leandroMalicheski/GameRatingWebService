@@ -10,6 +10,7 @@ public class Game {
 	String devs;
 	String visitedDate;
 	String userLogin;
+	String img;
 	
 	boolean isVisible;
 	int ratingMedio;
@@ -119,5 +120,11 @@ public class Game {
 	}
 	public void setUserLogin(String userLogin) {
 		this.userLogin = userLogin;
+	}
+	public String getImg() {
+		return img;
+	}
+	public void setImg(String img) {
+		this.img = img;
 	}	
 }

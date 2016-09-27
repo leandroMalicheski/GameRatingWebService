@@ -41,6 +41,7 @@ public class GameDAOImpl implements GameDAO {
 				Game gameTemp = new Game();
 				gameTemp.setId(result.getLong("ID"));
 				gameTemp.setName(result.getString("NAME"));
+				gameTemp.setImg(result.getString("IMAGE"));
 				gamesList.add(gameTemp);
 			}
 			return gamesList;
@@ -96,6 +97,7 @@ public class GameDAOImpl implements GameDAO {
 				game.setDevs(result.getString("DEVELOPERS"));
 				game.setRatingMedio(result.getInt("RATINGMEDIO"));
 				game.setVisitedTimes(result.getInt("VISITEDTIMES"));
+				game.setImg(result.getString("IMAGE"));
 				int visibility = result.getInt("VISIBLE");
 				if(visibility == 0) {
 					game.setIsVisible(true);
@@ -167,6 +169,7 @@ public class GameDAOImpl implements GameDAO {
 			while(result.next()){
 				game.setId(result.getLong("ID"));
 				game.setName(result.getString("NAME"));
+				game.setImg(result.getString("IMAGE"));
 				game.setRatingJogabilidade(result.getInt("JOGABILITY"));
 				game.setRatingMedio(result.getInt("RATINGMEDIO"));
 				game.setRatingDiversao(result.getInt("FUN"));
@@ -416,7 +419,7 @@ public class GameDAOImpl implements GameDAO {
 	}
 	
 	private static final String SELECT_GAME_BY_NAME_SEARCH = "SELECT ID,NAME FROM GAME WHERE VISIBLE=0 AND REMOVED=0 AND NAME LIKE ?";
-	private static final String SELECT_GAME_BY_NAME_SEARCH_ADM = "SELECT ID,NAME FROM GAME WHERE REMOVED=0 AND NAME LIKE ?";
+	private static final String SELECT_GAME_BY_NAME_SEARCH_ADM = "SELECT ID,NAME,IMAGE FROM GAME WHERE REMOVED=0 AND NAME LIKE ?";
 	private static final String SELECT_GAME_BY_NAME = "SELECT * FROM GAME WHERE VISIBLE=0 AND REMOVED=0 AND NAME=?";
 	private static final String SELECT_GAME_BY_ID = "SELECT * FROM GAME WHERE REMOVED=0 AND ID=?";	
 	
