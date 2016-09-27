@@ -33,13 +33,7 @@ public class UserDAOImpl implements UserDAO {
 			preparedStatement.setString(3, usuario.getLogin());
 			preparedStatement.setString(4, usuario.getPassword());
 			preparedStatement.setString(5, usuario.getPasswordTip());
-			preparedStatement.setInt(6, 2);
-			preparedStatement.setInt(7, 0);
-			preparedStatement.setInt(8, 0);
-			preparedStatement.setInt(9, 0);
-			preparedStatement.setInt(10, 0);
-			preparedStatement.setInt(11, 0);
-			preparedStatement.setInt(12, 0);
+			preparedStatement.setString(6, usuario.getImg());
 			preparedStatement.execute();
 						
 		} catch (SQLException e) {
@@ -161,6 +155,7 @@ public class UserDAOImpl implements UserDAO {
 				usuarioRetorno.setEmail(result.getString("EMAIL"));
 				usuarioRetorno.setLogin(result.getString("LOGIN"));
 				usuarioRetorno.setPassword(result.getString("PASSWORD"));
+				usuarioRetorno.setPasswordTip(result.getString("PASSWORDTIP"));
 				usuarioRetorno.setProfile(result.getInt("PROFILE"));
 				usuarioRetorno.setLikes(result.getInt("LIKES"));
 				usuarioRetorno.setDislikes(result.getInt("DISLIKES"));
@@ -488,7 +483,7 @@ public class UserDAOImpl implements UserDAO {
 	private static final String LOGIN = "SELECT * FROM USER WHERE LOGIN=? AND PASSWORD=? AND BLOCKED = 0";
 	private static final String LOGIN_VALIDATION = "SELECT * FROM USER WHERE LOGIN=?";
 	
-	private static final String INSERT_USER = "INSERT INTO USER(NAME,EMAIL,LOGIN,PASSWORD,PASSWORDTIP,PROFILE,LIKES,DISLIKES,BLOCKED,VISIBLE,COMMENTS,TOPICS) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+	private static final String INSERT_USER = "INSERT INTO USER(NAME,EMAIL,LOGIN,PASSWORD,PASSWORDTIP,PROFILE,LIKES,DISLIKES,BLOCKED,VISIBLE,COMMENTS,TOPICS,IMAGE) VALUES (?,?,?,?,?,2,0,0,0,0,0,0,?)";
 	private static final String INSERT_REPUTATION = "INSERT INTO REPUTATION(PROFILEID,USERID,ISLIKE) VALUES (?,?,?)";
 
 }

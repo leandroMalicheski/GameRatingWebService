@@ -265,7 +265,8 @@ public class GameDAOImpl implements GameDAO {
 			preparedStatement.setString(4, game.getPlatforms());
 			preparedStatement.setString(5, game.getDevs());
 			preparedStatement.setInt(6, game.getRatingMedio());
-			preparedStatement.setDate(7, new Date(Calendar.getInstance().getTimeInMillis())); 
+			preparedStatement.setDate(7, new Date(Calendar.getInstance().getTimeInMillis()));
+			preparedStatement.setString(8, game.getImg());
 			preparedStatement.execute();
 						
 		} catch (SQLException e) {
@@ -435,5 +436,5 @@ public class GameDAOImpl implements GameDAO {
 	private static final String UPDATE_VISITEDTIMES = "UPDATE GAME SET VISITEDTIMES=?,VISITEDDATE=?,USERVISITED=? WHERE ID=?";
 	
 	private static final String INSERT_GAME_RATE = "INSERT INTO RATE(USERID,GAMEID,JOGABILITY,FUN,SOUND,IMMERSION) VALUES(?,?,?,?,?,?)";
-	private static final String INSERT_GAME = "INSERT INTO GAME(NAME,DESCRIPTION,LAUNCHDATE,PLATAFORMS,DEVELOPERS,RATINGMEDIO,VISIBLE,REMOVED,CREATEDATE,VISITEDTIMES) VALUES(?,?,?,?,?,?,0,0,?,0)";
+	private static final String INSERT_GAME = "INSERT INTO GAME(NAME,DESCRIPTION,LAUNCHDATE,PLATAFORMS,DEVELOPERS,RATINGMEDIO,VISIBLE,REMOVED,CREATEDATE,VISITEDTIMES,IMAGE) VALUES(?,?,?,?,?,?,0,0,?,0,?)";
 }

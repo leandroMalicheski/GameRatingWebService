@@ -133,6 +133,7 @@ public class TopicServices {
 		userDao.updateComments(user);
 		topicDAO.addComment(comment);
 		comment.setUser(user.getLogin());
+		comment.setUserImg(user.getImg());
 		return comment; 
     }
 
