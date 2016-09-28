@@ -386,7 +386,8 @@ public class UserDAOImpl implements UserDAO {
 			preparedStatement.setString(1,user.getName());
 			preparedStatement.setString(2,user.getEmail());
 			preparedStatement.setString(3,user.getPasswordTip());
-			preparedStatement.setLong(4,user.getId());
+			preparedStatement.setString(4,user.getImg());
+			preparedStatement.setLong(5,user.getId());
 			preparedStatement.execute();
 			
 		} catch (SQLException e) {
@@ -474,7 +475,7 @@ public class UserDAOImpl implements UserDAO {
 	private static final String UPDATE_USER_TOPICS = "UPDATE USER SET TOPICS=? WHERE ID=?";
 	private static final String UPDATE_USER_COMMENTS = "UPDATE USER SET COMMENTS=? WHERE ID=?";
 	private static final String UPDATE_USER_PROFILE = "UPDATE USER SET PROFILE=? WHERE ID=?";
-	private static final String UPDATE_USER = "UPDATE USER SET NAME=?,EMAIL=?,PASSWORDTIP=? WHERE ID=?";
+	private static final String UPDATE_USER = "UPDATE USER SET NAME=?,EMAIL=?,PASSWORDTIP=?, IMAGE=? WHERE ID=?";
 	private static final String UPDATE_USER_FULL_REPUTATION = "UPDATE USER SET LIKES=?,DISLIKES=? WHERE ID=?";
 	
 	private static final String DISABLE_USER = "UPDATE USER SET VISIBLE=? WHERE ID=?";

@@ -5,6 +5,7 @@ public class Comment {
 	long userId;
 	long topicId;
 	String userImg;
+	String img;
 
 	String user;
 	String body;
@@ -59,5 +60,11 @@ public class Comment {
 	}
 	public void setUserImg(String userImg) {
 		this.userImg = userImg;
+	}
+	public String getImg() {
+		return img;
+	}
+	public void setImg(String img) {
+		this.img = img;
 	}	
 }

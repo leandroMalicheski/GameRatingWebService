@@ -146,7 +146,8 @@ public class GameDAOImpl implements GameDAO {
 			preparedStatement.setString(4, game.getPlatforms());
 			preparedStatement.setString(5, game.getDevs());
 			preparedStatement.setInt(6, game.getRatingMedio());
-			preparedStatement.setLong(7,game.getId());
+			preparedStatement.setString(7, game.getImg());
+			preparedStatement.setLong(8,game.getId());
 			preparedStatement.execute();
 						
 		} catch (SQLException e) {
@@ -431,7 +432,7 @@ public class GameDAOImpl implements GameDAO {
 	private static final String SELECT_GAME_LAST_VISITED_DATE = "SELECT NAME, VISITEDDATE, USERVISITED FROM GAME WHERE VISIBLE=0 AND REMOVED=0 ORDER BY VISITEDDATE DESC";
 	
 	private static final String UPDATE_GAME_HIDE_FLAG = "UPDATE GAME SET VISIBLE=? WHERE ID=?";
-	private static final String UPDATE_GAME = "UPDATE GAME SET NAME=?,DESCRIPTION=?,LAUNCHDATE=?,PLATAFORMS=?,DEVELOPERS=?,RATINGMEDIO=? WHERE ID=?";
+	private static final String UPDATE_GAME = "UPDATE GAME SET NAME=?,DESCRIPTION=?,LAUNCHDATE=?,PLATAFORMS=?,DEVELOPERS=?,RATINGMEDIO=?, IMAGE=? WHERE ID=?";
 	private static final String UPDATE_GAME_RATE = "UPDATE RATE SET JOGABILITY=?,FUN=?,SOUND=?,IMMERSION=? WHERE USERID=? AND GAMEID=?";
 	private static final String UPDATE_VISITEDTIMES = "UPDATE GAME SET VISITEDTIMES=?,VISITEDDATE=?,USERVISITED=? WHERE ID=?";
 	

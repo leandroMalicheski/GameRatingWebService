@@ -15,6 +15,7 @@ public class Topic {
 	String body;
 	String visitedDate;
 	String userLogin;
+	String img;
 	int visitedTimes;
 	Date createdDate;
 	
@@ -95,6 +96,12 @@ public class Topic {
 	}
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+	public String getImg() {
+		return img;
+	}
+	public void setImg(String img) {
+		this.img = img;
 	}
 
 }

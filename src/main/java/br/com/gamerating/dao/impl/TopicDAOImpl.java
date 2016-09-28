@@ -110,6 +110,7 @@ public class TopicDAOImpl implements TopicDAO{
 				commentTemp.setUserId(result.getInt("USERID"));
 				commentTemp.setBody(result.getString("BODY"));
 				commentTemp.setUser(result.getString("LOGIN"));
+				commentTemp.setImg(result.getString("IMAGE"));
 				commentTemp.setId(result.getLong("ID"));
 				commentList.add(commentTemp);
 			}
@@ -137,6 +138,7 @@ public class TopicDAOImpl implements TopicDAO{
 				topic.setBody(result.getString("BODY"));
 				topic.setVisitedTimes(result.getInt("VISITEDTIMES"));
 				topic.setCreatedDate(result.getDate("CREATIONDATE"));
+				topic.setImg(result.getString("IMAGE"));
 				int close = result.getInt("CLOSED");
 				if(close == 1){
 					topic.setClosed(true);
@@ -570,7 +572,7 @@ public class TopicDAOImpl implements TopicDAO{
 	private static final String SELECT_COMMENT_BY_ID = "SELECT * FROM COMMENT WHERE ID=? AND DELETED=0";
 	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER = "SELECT C.TOPICID FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
 	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER_TOPIC = "SELECT C.ID,C.BODY FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND TOPICID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
-	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID,C.ID FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND C.VISIBLE=0 AND C.DELETED=0";
+	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID,C.ID, C.IMAGE FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND C.VISIBLE=0 AND C.DELETED=0";
 	
 	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,VISITEDTIMES,USERID,GAMEID,DELETED,CREATIONDATE) VALUES(?,?,0,0,0,?,?,0,?)";
 	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID,DELETED) VALUES(?,0,?,?,0)";
