@@ -80,6 +80,7 @@ public class GameServices {
 	@RequestMapping(value="/updateRate", method=RequestMethod.POST)
 	public void updateGameRate(@RequestBody Game game) {
 		gameDAO.updateRate(game);
+		game = gameDAO.getGameById(String.valueOf(game.getId()));
 		game.setRatingMedio(Util.calcularRateMedio(game));
 		gameDAO.update(game);
 	}

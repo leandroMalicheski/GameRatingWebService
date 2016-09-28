@@ -61,6 +61,7 @@ public class TopicDAOImpl implements TopicDAO{
 			preparedStatement.setLong(4, topic.getGameId());
 			Date dataCriacao = new Date(Calendar.getInstance().getTimeInMillis());
 			preparedStatement.setDate(5, dataCriacao);			
+			preparedStatement.setString(6, topic.getImg());
 			preparedStatement.execute();
 						
 		} catch (SQLException e) {
@@ -170,6 +171,7 @@ public class TopicDAOImpl implements TopicDAO{
 			preparedStatement.setString(1, comment.getBody());
 			preparedStatement.setLong(2, comment.getUserId());
 			preparedStatement.setLong(3, comment.getTopicId());
+			preparedStatement.setString(4, comment.getImg());
 			preparedStatement.execute();						
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -245,7 +247,8 @@ public class TopicDAOImpl implements TopicDAO{
 			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_TOPIC);
 			preparedStatement.setString(1,topic.getTitle());
 			preparedStatement.setString(2,topic.getBody());
-			preparedStatement.setLong(3,topic.getId());
+			preparedStatement.setString(3,topic.getImg());
+			preparedStatement.setLong(4,topic.getId());
 			preparedStatement.execute();
 			
 		} catch (SQLException e) {
@@ -293,6 +296,7 @@ public class TopicDAOImpl implements TopicDAO{
 				Comment commentTemp = new Comment();
 				commentTemp.setId(result.getLong("ID"));
 				commentTemp.setBody(result.getString("BODY"));
+				commentTemp.setImg(result.getString("IMAGE"));
 				commentList.add(commentTemp);
 			}
 			return commentList;
@@ -317,6 +321,8 @@ public class TopicDAOImpl implements TopicDAO{
 			while(result.next()){
 				comment.setId(result.getInt("ID"));
 				comment.setBody(result.getString("BODY"));
+				comment.setImg(result.getString("IMAGE"));
+				comment.setUserImg(result.getString("USERIMAGE"));
 				int visibility = result.getInt("VISIBLE");
 				if(visibility == 0){
 					comment.setVisible(true);
@@ -473,6 +479,7 @@ public class TopicDAOImpl implements TopicDAO{
 				Comment commentTemp = new Comment();
 				commentTemp.setId(result.getLong("ID"));
 				commentTemp.setBody(result.getString("BODY"));
+				commentTemp.setImg(result.getString("IMAGE"));
 				int visibility = result.getInt("VISIBLE");
 				if(visibility == 0){
 					commentTemp.setVisible(true);					
@@ -569,13 +576,13 @@ public class TopicDAOImpl implements TopicDAO{
 	private static final String SELECT_HIDE_COMMENTS_BY_TOPIC = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0 AND TOPICID=?";
 	
 	private static final String SELECT_COMMENT_BY_USER = "SELECT * FROM COMMENT WHERE USERID=? AND DELETED=0";
-	private static final String SELECT_COMMENT_BY_ID = "SELECT * FROM COMMENT WHERE ID=? AND DELETED=0";
+	private static final String SELECT_COMMENT_BY_ID = "SELECT C.ID,C.BODY,C.VISIBLE,C.IMAGE,U.IMAGE AS USERIMAGE FROM COMMENT AS C, USER AS U WHERE C.ID=? AND C.DELETED=0 AND C.USERID=U.ID";
 	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER = "SELECT C.TOPICID FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
-	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER_TOPIC = "SELECT C.ID,C.BODY FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND TOPICID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
+	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER_TOPIC = "SELECT C.ID,C.BODY,C.IMAGE FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND TOPICID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
 	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID,C.ID, C.IMAGE FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND C.VISIBLE=0 AND C.DELETED=0";
 	
-	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,VISITEDTIMES,USERID,GAMEID,DELETED,CREATIONDATE) VALUES(?,?,0,0,0,?,?,0,?)";
-	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID,DELETED) VALUES(?,0,?,?,0)";
+	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,VISITEDTIMES,USERID,GAMEID,DELETED,CREATIONDATE,IMAGE) VALUES(?,?,0,0,0,?,?,0,?,?)";
+	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID,DELETED,IMAGE) VALUES(?,0,?,?,0,?)";
 	
 	private static final String UPDATE_VISITEDTIMES = "UPDATE TOPIC SET VISITEDTIMES=?,VISITEDDATE=?,USERVISITED=? WHERE ID=?";
 	private static final String UPDATE_TOPIC_CLOSED_STATUS = "UPDATE TOPIC SET CLOSED=? WHERE ID=?";
@@ -583,6 +590,6 @@ public class TopicDAOImpl implements TopicDAO{
 	private static final String UPDATE_COMMENT_REMOVE_STATUS = "UPDATE COMMENT SET DELETED=1 WHERE ID=?";
 	private static final String UPDATE_COMMENT = "UPDATE COMMENT SET BODY=? WHERE ID=?";
 	private static final String UPDATE_COMMENT_HIDE_FLAG = "UPDATE COMMENT SET VISIBLE=? WHERE ID=?";
-	private static final String UPDATE_TOPIC = "UPDATE TOPIC SET TITLE=?, BODY=? WHERE ID=?";
+	private static final String UPDATE_TOPIC = "UPDATE TOPIC SET TITLE=?, BODY=?, IMAGE=? WHERE ID=?";
 	private static final String UPDATE_TOPIC_HIDE_FLAG = "UPDATE TOPIC SET VISIBLE=? WHERE ID=?";
 }

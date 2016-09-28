@@ -171,7 +171,9 @@ public class TopicServices {
 		ArrayList<Topic> topicList = new ArrayList<Topic>();
 		for(Comment comment : commentList){
 			Topic topicTemp = topicDAO.getTopicById(String.valueOf(comment.getTopicId()));
-			topicList.add(topicTemp);			
+			if(topicTemp.getTitle() != null){
+				topicList.add(topicTemp);							
+			}
 		}
 		return topicList;
     }
