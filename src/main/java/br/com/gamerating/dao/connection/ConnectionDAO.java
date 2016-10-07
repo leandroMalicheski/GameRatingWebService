@@ -35,11 +35,4 @@ public class ConnectionDAO {
 		}
 		return this.conn;
 	}
-	
-	public static void main(String[] args) {
-		Connection conn = ConnectionDAO.getInstance().getConnection();
-		if(conn!= null){
-			System.out.println("YO BITCHES IM CONNECTED");
-		}
-	}
 }

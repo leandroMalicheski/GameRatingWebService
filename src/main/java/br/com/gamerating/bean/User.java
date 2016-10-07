@@ -18,19 +18,6 @@ public class User {
 	boolean isBlocked;
 	boolean isVisible;
 	
-	public static User login(String login, String senha){
-		if(login.equalsIgnoreCase("leandro") && senha.equalsIgnoreCase("123")){
-			User usuario = new User();
-			usuario.setId(1);
-			usuario.setLogin(login);
-			usuario.setPassword(senha);
-			usuario.setName("LeadroMCDS");
-			return usuario;
-		}else{
-			return null;			
-		}
-	}
-
 	public String getName() {
 		return name;
 	}

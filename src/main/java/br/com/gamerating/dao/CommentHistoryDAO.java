@@ -4,6 +4,6 @@ import br.com.gamerating.bean.Comment;
 
 public interface CommentHistoryDAO {
 
-	void addEditInfo(Comment newTopicInfo, Comment oldTopicInfo);
+	void addEditInfo(Comment newCommentInfo, Comment oldCommentInfo);
 
 }
