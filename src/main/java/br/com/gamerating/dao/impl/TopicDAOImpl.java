@@ -359,11 +359,17 @@ public class TopicDAOImpl implements TopicDAO{
 			this.conn = ConnectionDAO.getInstance().getConnection();
 		}
 		try {
-			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_COMMENT);
-			preparedStatement.setString(1,comment.getBody());
-			preparedStatement.setLong(2,comment.getId());
-			preparedStatement.execute();
+			PreparedStatement preparedStatement;
+			if(comment.getBody() != null){
+				preparedStatement = this.conn.prepareStatement(UPDATE_COMMENT);
+				preparedStatement.setString(1,comment.getBody());
+			}else{
+				preparedStatement = this.conn.prepareStatement(UPDATE_COMMENT_IMG);
+				preparedStatement.setString(1,comment.getImg());
+			}
 			
+			preparedStatement.setLong(2,comment.getId());				
+			preparedStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -589,6 +595,7 @@ public class TopicDAOImpl implements TopicDAO{
 	private static final String UPDATE_TOPIC_REMOVE_STATUS = "UPDATE TOPIC SET DELETED=1 WHERE ID=?";
 	private static final String UPDATE_COMMENT_REMOVE_STATUS = "UPDATE COMMENT SET DELETED=1 WHERE ID=?";
 	private static final String UPDATE_COMMENT = "UPDATE COMMENT SET BODY=? WHERE ID=?";
+	private static final String UPDATE_COMMENT_IMG = "UPDATE COMMENT SET IMAGE=? WHERE ID=?";
 	private static final String UPDATE_COMMENT_HIDE_FLAG = "UPDATE COMMENT SET VISIBLE=? WHERE ID=?";
 	private static final String UPDATE_TOPIC = "UPDATE TOPIC SET TITLE=?, BODY=?, IMAGE=? WHERE ID=?";
 	private static final String UPDATE_TOPIC_HIDE_FLAG = "UPDATE TOPIC SET VISIBLE=? WHERE ID=?";

@@ -94,7 +94,9 @@ public class TopicServices {
 	
 	@RequestMapping(value="/updateComment", method=RequestMethod.POST)
 	public void updateComment(@RequestBody Comment comment) {
-		commentHistoryDAO.addEditInfo(comment,topicDAO.getCommentById(String.valueOf(comment.getId())));
+		if(comment.getBody() != null){
+			commentHistoryDAO.addEditInfo(comment,topicDAO.getCommentById(String.valueOf(comment.getId())));
+		}
 		topicDAO.updateComment(comment);
 	}
 	
