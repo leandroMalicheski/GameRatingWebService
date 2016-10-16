@@ -86,7 +86,7 @@ public class GameDAOImpl implements GameDAO {
 		Game game = new Game();
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_GAME_BY_ID);
-			preparedStatement.setString(1, id);
+			preparedStatement.setInt(1, Integer.valueOf(id));
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
@@ -126,7 +126,7 @@ public class GameDAOImpl implements GameDAO {
 				visibility = 1;
 			}
 			preparedStatement.setInt(1, visibility);
-			preparedStatement.setLong(2,game.getId());
+			preparedStatement.setInt(2,(int)game.getId());
 			preparedStatement.execute();
 						
 		} catch (SQLException e) {
@@ -148,7 +148,7 @@ public class GameDAOImpl implements GameDAO {
 			preparedStatement.setString(5, game.getDevs());
 			preparedStatement.setInt(6, game.getRatingMedio());
 			preparedStatement.setString(7, game.getImg());
-			preparedStatement.setLong(8,game.getId());
+			preparedStatement.setInt(8,(int)game.getId());
 			preparedStatement.execute();
 						
 		} catch (SQLException e) {
@@ -221,7 +221,7 @@ public class GameDAOImpl implements GameDAO {
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(INSERT_GAME_RATE);
 			preparedStatement.setInt(1, game.getUserTempId());
-			preparedStatement.setLong(2, game.getId());
+			preparedStatement.setInt(2, (int)game.getId());
 			preparedStatement.setInt(3, game.getRatingJogabilidade());
 			preparedStatement.setInt(4, game.getRatingDiversao());
 			preparedStatement.setInt(5, game.getRatingAudio());
@@ -246,7 +246,7 @@ public class GameDAOImpl implements GameDAO {
 			preparedStatement.setInt(3, game.getRatingAudio());
 			preparedStatement.setInt(4, game.getRatingImersao());
 			preparedStatement.setInt(5, game.getUserTempId());
-			preparedStatement.setLong(6, game.getId());
+			preparedStatement.setInt(6, (int)game.getId());
 			preparedStatement.execute();
 						
 		} catch (SQLException e) {
@@ -338,7 +338,7 @@ public class GameDAOImpl implements GameDAO {
 			preparedStatement.setInt(1, visitedTimes);
 			preparedStatement.setDate(2, new Date(Calendar.getInstance().getTimeInMillis()));
 			preparedStatement.setString(3, userLogin);
-			preparedStatement.setString(4, id);
+			preparedStatement.setInt(4, Integer.valueOf(id));
 			preparedStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -429,7 +429,7 @@ public class GameDAOImpl implements GameDAO {
 	private static final String SELECT_GAME_RATE = "SELECT * FROM GAME AS G,RATE AS R WHERE G.ID = R.GAMEID AND R.USERID = ? AND R.GAMEID = ?";	
 	private static final String SELECT_GAME_RATE_BY_GAME = "SELECT * FROM RATE WHERE GAMEID = ?";	
 	private static final String SELECT_GAME_TOPICS = "SELECT G.NAME , COUNT(T.ID) AS TOPICS FROM GAME AS G,TOPIC AS T WHERE G.ID=T.GAMEID GROUP BY G.ID";
-	private static final String SELECT_GAME_COMMENTS = "SELECT G.NAME , COUNT(C.ID) AS COMMENTS FROM GAME AS G,TOPIC AS T, COMMENT AS C WHERE G.ID=T.GAMEID AND T.ID=C.TOPICID GROUP BY G.ID";
+	private static final String SELECT_GAME_COMMENTS = "SELECT G.NAME , COUNT(C.ID) AS COMMENTS FROM GAME AS G,TOPIC AS T, TCOMMENT AS C WHERE G.ID=T.GAMEID AND T.ID=C.TOPICID GROUP BY G.ID";
 	private static final String SELECT_GAME_LAST_VISITED_DATE = "SELECT NAME, VISITEDDATE, USERVISITED FROM GAME WHERE VISIBLE=0 AND REMOVED=0 ORDER BY VISITEDDATE DESC";
 	
 	private static final String UPDATE_GAME_HIDE_FLAG = "UPDATE GAME SET VISIBLE=? WHERE ID=?";

@@ -32,7 +32,7 @@ public class TopicDAOImpl implements TopicDAO{
 		ArrayList<Topic> topicList = new ArrayList<Topic>();
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_TOPIC_BY_GAME);
-			preparedStatement.setString(1, id);
+			preparedStatement.setInt(1, Integer.valueOf(id));
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
@@ -76,7 +76,7 @@ public class TopicDAOImpl implements TopicDAO{
 		ArrayList<Topic> topicList = new ArrayList<Topic>();
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_TOPIC_BY_USER);
-			preparedStatement.setString(1, id);
+			preparedStatement.setInt(1, Integer.valueOf(id));
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
@@ -103,7 +103,7 @@ public class TopicDAOImpl implements TopicDAO{
 		ArrayList<Comment> commentList = new ArrayList<Comment>();
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_COMMENT_BY_TOPIC);
-			preparedStatement.setString(1, id);
+			preparedStatement.setInt(1, Integer.valueOf(id));
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
@@ -130,7 +130,7 @@ public class TopicDAOImpl implements TopicDAO{
 		Topic topic = new Topic();
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_TOPIC_BY_ID);
-			preparedStatement.setString(1, id);
+			preparedStatement.setInt(1, Integer.valueOf(id));
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
@@ -186,7 +186,7 @@ public class TopicDAOImpl implements TopicDAO{
 		ArrayList<Comment> commentList = new ArrayList<Comment>();
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_COMMENT_BY_USER);
-			preparedStatement.setString(1, id);
+			preparedStatement.setInt(1, Integer.valueOf(id));
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
@@ -215,7 +215,7 @@ public class TopicDAOImpl implements TopicDAO{
 				visibility = 1;
 			}
 			preparedStatement.setInt(1,visibility);
-			preparedStatement.setLong(2,topic.getId());
+			preparedStatement.setInt(2,(int)topic.getId());
 			preparedStatement.execute();
 			
 		} catch (SQLException e) {
@@ -230,7 +230,7 @@ public class TopicDAOImpl implements TopicDAO{
 		}
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_TOPIC_REMOVE_STATUS);
-			preparedStatement.setLong(1,topic.getId());
+			preparedStatement.setInt(1,(int)topic.getId());
 			preparedStatement.execute();
 			
 		} catch (SQLException e) {
@@ -248,7 +248,7 @@ public class TopicDAOImpl implements TopicDAO{
 			preparedStatement.setString(1,topic.getTitle());
 			preparedStatement.setString(2,topic.getBody());
 			preparedStatement.setString(3,topic.getImg());
-			preparedStatement.setLong(4,topic.getId());
+			preparedStatement.setInt(4,(int)topic.getId());
 			preparedStatement.execute();
 			
 		} catch (SQLException e) {
@@ -264,7 +264,7 @@ public class TopicDAOImpl implements TopicDAO{
 		ArrayList<Comment> commentList = new ArrayList<Comment>();
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER);
-			preparedStatement.setString(1, id);
+			preparedStatement.setInt(1, Integer.valueOf(id));
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
@@ -315,7 +315,7 @@ public class TopicDAOImpl implements TopicDAO{
 		Comment comment = new Comment();
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_COMMENT_BY_ID);
-			preparedStatement.setString(1, id);
+			preparedStatement.setInt(1, Integer.valueOf(id));
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
@@ -345,7 +345,7 @@ public class TopicDAOImpl implements TopicDAO{
 		}
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(UPDATE_COMMENT_REMOVE_STATUS);
-			preparedStatement.setLong(1,comment.getId());
+			preparedStatement.setInt(1,(int)comment.getId());
 			preparedStatement.execute();
 			
 		} catch (SQLException e) {
@@ -368,7 +368,7 @@ public class TopicDAOImpl implements TopicDAO{
 				preparedStatement.setString(1,comment.getImg());
 			}
 			
-			preparedStatement.setLong(2,comment.getId());				
+			preparedStatement.setInt(2,(int)comment.getId());				
 			preparedStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -441,7 +441,7 @@ public class TopicDAOImpl implements TopicDAO{
 				visibility = 1;
 			}
 			preparedStatement.setInt(1, visibility);
-			preparedStatement.setLong(2,topic.getId());
+			preparedStatement.setInt(2,(int)topic.getId());
 			preparedStatement.execute();
 						
 		} catch (SQLException e) {
@@ -461,7 +461,7 @@ public class TopicDAOImpl implements TopicDAO{
 				visibility = 1;
 			}
 			preparedStatement.setInt(1, visibility);
-			preparedStatement.setLong(2,comment.getId());
+			preparedStatement.setInt(2,(int)comment.getId());
 			preparedStatement.execute();
 			
 		} catch (SQLException e) {
@@ -478,7 +478,7 @@ public class TopicDAOImpl implements TopicDAO{
 		ArrayList<Comment> commentList = new ArrayList<Comment>();
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(SELECT_HIDE_COMMENTS_BY_TOPIC);
-			preparedStatement.setString(1, id);
+			preparedStatement.setInt(1, Integer.valueOf(id));
 			ResultSet result = preparedStatement.executeQuery();
 			
 			while(result.next()){
@@ -514,7 +514,7 @@ public class TopicDAOImpl implements TopicDAO{
 			preparedStatement.setInt(1, visitedTimes);
 			preparedStatement.setDate(2, new Date(Calendar.getInstance().getTimeInMillis()));
 			preparedStatement.setString(3, login);
-			preparedStatement.setString(4, id);
+			preparedStatement.setInt(4, Integer.valueOf(id));
 			preparedStatement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -578,25 +578,25 @@ public class TopicDAOImpl implements TopicDAO{
 	private static final String SELECT_TOPIC = "SELECT TITLE,VISITEDTIMES,VISITEDDATE,USERVISITED FROM TOPIC WHERE VISIBLE=0 AND DELETED=0 ORDER BY VISITEDDATE DESC";
 	
 	private static final String SELECT_HIDE_TOPICS = "SELECT * FROM TOPIC WHERE VISIBLE=1 AND DELETED=0 ORDER BY CREATIONDATE DESC";
-	private static final String SELECT_HIDE_COMMENTS = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0";
-	private static final String SELECT_HIDE_COMMENTS_BY_TOPIC = "SELECT * FROM COMMENT WHERE VISIBLE=1 AND DELETED=0 AND TOPICID=?";
+	private static final String SELECT_HIDE_COMMENTS = "SELECT * FROM TCOMMENT WHERE VISIBLE=1 AND DELETED=0";
+	private static final String SELECT_HIDE_COMMENTS_BY_TOPIC = "SELECT * FROM TCOMMENT WHERE VISIBLE=1 AND DELETED=0 AND TOPICID=?";
 	
-	private static final String SELECT_COMMENT_BY_USER = "SELECT * FROM COMMENT WHERE USERID=? AND DELETED=0";
-	private static final String SELECT_COMMENT_BY_ID = "SELECT C.ID,C.BODY,C.VISIBLE,C.IMAGE,U.IMAGE AS USERIMAGE FROM COMMENT AS C, USER AS U WHERE C.ID=? AND C.DELETED=0 AND C.USERID=U.ID";
-	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER = "SELECT C.TOPICID FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
-	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER_TOPIC = "SELECT C.ID,C.BODY,C.IMAGE FROM COMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND TOPICID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
-	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID,C.ID, C.IMAGE FROM COMMENT AS C,USER AS U WHERE C.USERID = U.ID AND TOPICID=? AND C.VISIBLE=0 AND C.DELETED=0";
+	private static final String SELECT_COMMENT_BY_USER = "SELECT * FROM TCOMMENT WHERE USERID=? AND DELETED=0";
+	private static final String SELECT_COMMENT_BY_ID = "SELECT C.ID,C.BODY,C.VISIBLE,C.IMAGE,U.IMAGE AS USERIMAGE FROM TCOMMENT AS C, TUSER AS U WHERE C.ID=? AND C.DELETED=0 AND C.USERID=U.ID";
+	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER = "SELECT C.TOPICID FROM TCOMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
+	private static final String SELECT_COMMENT_UNCLOSED_TOPICS_BY_USER_TOPIC = "SELECT C.ID,C.BODY,C.IMAGE FROM TCOMMENT AS C,TOPIC AS T WHERE C.TOPICID = T.ID AND USERID=? AND TOPICID=? AND T.VISIBLE=0 AND C.DELETED=0 AND T.DELETED=0";
+	private static final String SELECT_COMMENT_BY_TOPIC = "SELECT C.BODY,U.LOGIN,C.USERID,C.ID, C.IMAGE FROM TCOMMENT AS C,TUSER AS U WHERE C.USERID = U.ID AND TOPICID=? AND C.VISIBLE=0 AND C.DELETED=0";
 	
 	private static final String INSERT_TOPIC = "INSERT INTO TOPIC(TITLE,BODY,CLOSED,VISIBLE,VISITEDTIMES,USERID,GAMEID,DELETED,CREATIONDATE,IMAGE) VALUES(?,?,0,0,0,?,?,0,?,?)";
-	private static final String INSERT_COMMENT = "INSERT INTO COMMENT(BODY,VISIBLE,USERID,TOPICID,DELETED,IMAGE) VALUES(?,0,?,?,0,?)";
+	private static final String INSERT_COMMENT = "INSERT INTO TCOMMENT(BODY,VISIBLE,USERID,TOPICID,DELETED,IMAGE) VALUES(?,0,?,?,0,?)";
 	
 	private static final String UPDATE_VISITEDTIMES = "UPDATE TOPIC SET VISITEDTIMES=?,VISITEDDATE=?,USERVISITED=? WHERE ID=?";
 	private static final String UPDATE_TOPIC_CLOSED_STATUS = "UPDATE TOPIC SET CLOSED=? WHERE ID=?";
 	private static final String UPDATE_TOPIC_REMOVE_STATUS = "UPDATE TOPIC SET DELETED=1 WHERE ID=?";
-	private static final String UPDATE_COMMENT_REMOVE_STATUS = "UPDATE COMMENT SET DELETED=1 WHERE ID=?";
-	private static final String UPDATE_COMMENT = "UPDATE COMMENT SET BODY=? WHERE ID=?";
-	private static final String UPDATE_COMMENT_IMG = "UPDATE COMMENT SET IMAGE=? WHERE ID=?";
-	private static final String UPDATE_COMMENT_HIDE_FLAG = "UPDATE COMMENT SET VISIBLE=? WHERE ID=?";
+	private static final String UPDATE_COMMENT_REMOVE_STATUS = "UPDATE TCOMMENT SET DELETED=1 WHERE ID=?";
+	private static final String UPDATE_COMMENT = "UPDATE TCOMMENT SET BODY=? WHERE ID=?";
+	private static final String UPDATE_COMMENT_IMG = "UPDATE TCOMMENT SET IMAGE=? WHERE ID=?";
+	private static final String UPDATE_COMMENT_HIDE_FLAG = "UPDATE TCOMMENT SET VISIBLE=? WHERE ID=?";
 	private static final String UPDATE_TOPIC = "UPDATE TOPIC SET TITLE=?, BODY=?, IMAGE=? WHERE ID=?";
 	private static final String UPDATE_TOPIC_HIDE_FLAG = "UPDATE TOPIC SET VISIBLE=? WHERE ID=?";
 }

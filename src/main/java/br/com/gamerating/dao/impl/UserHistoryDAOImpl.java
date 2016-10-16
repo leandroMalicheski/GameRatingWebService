@@ -29,7 +29,7 @@ public class UserHistoryDAOImpl implements UserHistoryDAO {
 		String camposAtualizados = checkCamposAtualizados(newUserInfo,oldUserInfo);
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(INSERT_USER_HISTORY);
-			preparedStatement.setLong(1, newUserInfo.getId());
+			preparedStatement.setInt(1,(int) newUserInfo.getId());
 			preparedStatement.setString(2, camposAtualizados);
 			preparedStatement.setDate(3, new Date(Calendar.getInstance().getTimeInMillis()));
 			preparedStatement.setString(4, newUserInfo.getLogin());

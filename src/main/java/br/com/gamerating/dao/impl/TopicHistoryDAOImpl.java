@@ -30,7 +30,7 @@ public class TopicHistoryDAOImpl implements TopicHistoryDAO {
 		String camposAtualizados = checkCamposAtualizados(newTopicInfo,oldTopicInfo);
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(INSERT_TOPIC_HISTORY);
-			preparedStatement.setLong(1, newTopicInfo.getId());
+			preparedStatement.setInt(1, (int)newTopicInfo.getId());
 			preparedStatement.setString(2, camposAtualizados);
 			preparedStatement.setDate(3, new Date(Calendar.getInstance().getTimeInMillis()));
 			preparedStatement.setString(4, userResponsible);

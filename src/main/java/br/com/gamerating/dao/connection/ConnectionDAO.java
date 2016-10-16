@@ -8,7 +8,7 @@ public class ConnectionDAO {
 	
 	private static ConnectionDAO instance;
 //	private static final String URL = "jdbc:hsqldb:file:C:\\Users\\lmacedo\\git\\GameRatingWebService\\resources\\database\\gameRating";
-	private static final String URL = "jdbc:hsqldb:file:C:\\Users\\Microsoft\\git\\GameRatingWebService\\resources\\database\\gameRating";
+	private static final String URL = "jdbc:postgresql://localhost:5432/GameRate";
 //jdbc:hsqldb:file:C:\workspace\GameRaingWebService\resources\database\gameRating
 //jdbc:hsqldb:file:C:\Users\lmacedo\git\GameRatingWebService\resources\database\gameRating
 	
@@ -25,8 +25,8 @@ public class ConnectionDAO {
 	public Connection getConnection(){
 		if(this.conn == null){
 			try {
-				Class.forName("org.hsqldb.jdbcDriver");
-				this.conn = DriverManager.getConnection(URL, "SA", "");
+				Class.forName("org.postgresql.Driver");
+				this.conn = DriverManager.getConnection(URL, "postgres", "091468");
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {

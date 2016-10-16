@@ -31,7 +31,7 @@ public class CommentHistoryDAOImpl implements CommentHistoryDAO {
 		String camposAtualizados = checkCamposAtualizados(newCommentInfo,oldCommentInfo);
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(INSERT_COMMENT_HISTORY);
-			preparedStatement.setLong(1, newCommentInfo.getId());
+			preparedStatement.setInt(1, (int) newCommentInfo.getId());
 			preparedStatement.setString(2, camposAtualizados);
 			preparedStatement.setDate(3, new Date(Calendar.getInstance().getTimeInMillis()));
 			preparedStatement.setString(4, newCommentInfo.getUser());

@@ -30,7 +30,7 @@ public class GameHistoryDAOImpl implements GameHistoryDAO {
 		String camposAtualizados = checkCamposAtualizados(newGameInfo,oldGameInfo);
 		try {
 			PreparedStatement preparedStatement = this.conn.prepareStatement(INSERT_GAME_HISTORY);
-			preparedStatement.setLong(1, newGameInfo.getId());
+			preparedStatement.setInt(1, (int)newGameInfo.getId());
 			preparedStatement.setString(2, camposAtualizados);
 			preparedStatement.setDate(3, new Date(Calendar.getInstance().getTimeInMillis()));
 			preparedStatement.setString(4, userResponsible);
